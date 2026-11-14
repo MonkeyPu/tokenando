@@ -39,7 +39,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         <Link href="/courses" className="tab" aria-current={pathname === "/courses" ? "page" : undefined}>All courses</Link>
         {courses.map((c) => (
           <Link key={c.slug} href={`/courses/${c.slug}`} className="tab"
-            aria-current={pathname === `/courses/${c.slug}` ? "page" : undefined}>
+            aria-current={pathname === `/courses/${c.slug}` || pathname.startsWith(`/courses/${c.slug}/`) ? "page" : undefined}>
             {c.tab}
           </Link>
         ))}

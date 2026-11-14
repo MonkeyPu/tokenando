@@ -73,7 +73,8 @@ a { color: inherit; text-decoration: none; }
 
 /* Path */
 .path { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 2.5rem; }
-.node { display: flex; align-items: center; gap: 1rem; width: 20rem; }
+.node { width: 20rem; }
+.node-link { display: flex; align-items: center; gap: 1rem; }
 .dot { flex: none; width: 4.5rem; height: 4.5rem; border-radius: 50%; display: grid; place-items: center; font: 700 1.5rem var(--font-display); background: var(--green); color: var(--on-green); box-shadow: 0 6px 0 rgba(122, 251, 106, 0.35); }
 .node-label { font-weight: 700; }
 .node-label span { display: block; font-weight: 400; color: var(--muted); font-size: 0.9rem; }
@@ -83,3 +84,26 @@ a { color: inherit; text-decoration: none; }
   .login-hero, .login-form { padding: 2rem 1.5rem; }
   .node { width: 100%; transform: none !important; }
 }
+
+/* Path node states */
+.dot.todo { background: var(--surface); color: var(--fg); border: 3px solid var(--green); box-shadow: none; }
+.dot.skipped { background: transparent; color: var(--fg); border: 3px dashed var(--green); box-shadow: none; }
+
+/* Lesson player */
+.player { max-width: 40rem; margin: 1.5rem auto 0; }
+.player h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-top: 0.5rem; }
+.bar { display: flex; gap: 0.4rem; margin-bottom: 1.5rem; }
+.bar i { flex: 1; height: 0.5rem; border-radius: 999px; background: var(--line); }
+.bar i.on { background: var(--green); }
+.bar i.skip { background: var(--muted); }
+.bar i.now { background: var(--fg); }
+.options { display: grid; gap: 0.75rem; margin: 1.5rem 0; }
+.option { text-align: left; font: 600 1.1rem var(--font-body), system-ui, sans-serif; padding: 1rem 1.2rem; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--fg); cursor: pointer; }
+.option:hover:not(:disabled) { border-color: var(--green); }
+.option[aria-checked="true"] { border-color: var(--green); box-shadow: inset 0 0 0 2px var(--green); }
+.option:disabled { cursor: default; }
+.option.right { border-color: var(--green); background: rgba(122, 251, 106, 0.18); box-shadow: none; }
+.option.wrong { border-color: #ff6b6b; box-shadow: none; }
+.feedback { padding: 1rem 1.2rem; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); margin-bottom: 1.25rem; }
+.actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.btn.ghost[href], a.btn { display: inline-block; }
