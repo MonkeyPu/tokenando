@@ -4,15 +4,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
+// Kids sign up with just a username. Supabase needs an email, so we turn the username into a private one.
+// (Turn off "Confirm email" in Supabase so no real email is ever needed.)
+const EMAIL_DOMAIN = "tokenando.app";
+const toEmail = (username: string) => `${username}@${EMAIL_DOMAIN}`;
+const validName = /^[a-z0-9_]{3,20}$/;
+
 const tokens = ["Learn", " how", " A", "I", " works", " by", " play", "ing", " with", " it"];
 
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -23,16 +28,26 @@ export default function LoginPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setError(""); setNotice(""); setBusy(true);
+    setError("");
+    const name = username.trim().toLowerCase();
+    if (!validName.test(name)) {
+      setError("Use 3 to 20 letters, numbers or underscores for your username.");
+      return;
+    }
+    setBusy(true);
     if (mode === "login") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError("That email and password don't match. Check them and try again.");
+      const { error } = await supabase.auth.signInWithPassword({ email: toEmail(name), password });
+      if (error) setError("That username and password don't match. Check them and try again.");
       else router.replace("/courses");
     } else {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) setError(error.message);
+      const { data, error } = await supabase.auth.signUp({
+        email: toEmail(name),
+        password,
+        options: { data: { display_name: name } },
+      });
+      if (error) setError(/already/i.test(error.message) ? "That username is taken. Try another one." : error.message);
       else if (data.session) router.replace("/courses");
-      else setNotice("Check your email for a link to confirm your account, then log in.");
+      else setError("Sign-up isn't ready yet. Ask the site owner to turn off email confirmation in Supabase.");
     }
     setBusy(false);
   }
@@ -52,17 +67,17 @@ export default function LoginPage() {
 
       <form className="login-form" onSubmit={submit}>
         <h2>{mode === "login" ? "Log in" : "Create your account"}</h2>
-        <label className="field">Email
-          <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <label className="field">Username
+          <input type="text" required minLength={3} maxLength={20} autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false}
+            value={username} onChange={(e) => setUsername(e.target.value)} />
         </label>
         <label className="field">Password
           <input type="password" required minLength={6} autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
         {error && <p className="error" role="alert">{error}</p>}
-        {notice && <p className="notice" role="status">{notice}</p>}
         <button className="btn" disabled={busy}>{mode === "login" ? "Log in" : "Create account"}</button>
-        <button type="button" className="linkish" onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); setNotice(""); }}>
+        <button type="button" className="linkish" onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); }}>
           {mode === "login" ? "New here? Create an account" : "Already have an account? Log in"}
         </button>
       </form>

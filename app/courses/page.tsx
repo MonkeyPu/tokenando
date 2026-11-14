@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { courses } from "@/lib/courses";
+import LogoutButton from "@/components/LogoutButton";
 
 export default function CoursesPage() {
   return (
@@ -15,6 +16,7 @@ export default function CoursesPage() {
           </Link>
         ))}
       </div>
+      <p style={{ marginTop: "3rem" }}><LogoutButton /></p>
     </>
   );
 }
