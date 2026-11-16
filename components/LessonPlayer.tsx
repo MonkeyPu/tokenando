@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import type { Question } from "@/lib/lessons";
+import type { Card, Question } from "@/lib/types";
 import { saveLesson } from "@/lib/progress";
 
 type Result = "correct" | "wrong" | "skipped";
@@ -11,19 +11,23 @@ type Props = {
   slug: string;
   lessonIndex: number;
   title: string;
+  cards: Card[];
   questions: Question[];
   nextHref: string | null;
 };
 
-export default function LessonPlayer({ slug, lessonIndex, title, questions, nextHref }: Props) {
-  const [i, setI] = useState(0);
+export default function LessonPlayer({ slug, lessonIndex, title, cards, questions, nextHref }: Props) {
+  const total = cards.length + questions.length;
+  const [step, setStep] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   const [results, setResults] = useState<Result[]>([]);
   const [saved, setSaved] = useState<"idle" | "saving" | "ok" | "failed">("idle");
 
-  const finished = results.length === questions.length;
-  const q = questions[i];
+  const finished = step >= total;
+  const onCard = step < cards.length;
+  const qi = step - cards.length;
+  const q = questions[qi];
 
   async function finish(all: Result[]) {
     setSaved("saving");
@@ -32,20 +36,24 @@ export default function LessonPlayer({ slug, lessonIndex, title, questions, next
     setSaved(ok ? "ok" : "failed");
   }
 
+  function nextCard() {
+    setStep(step + 1);
+  }
+
   function record(r: Result) {
     const next = [...results, r];
     setResults(next);
     setPicked(null);
     setChecked(false);
-    if (next.length === questions.length) finish(next);
-    else setI(i + 1);
+    setStep(step + 1);
+    if (step + 1 >= total) finish(next);
   }
 
   const bar = (
     <div className="bar" aria-hidden>
-      {questions.map((_, n) => {
-        const r = results[n];
-        const cls = r === "skipped" ? "skip" : r ? "on" : n === i && !finished ? "now" : "";
+      {Array.from({ length: total }, (_, n) => {
+        const skipped = n >= cards.length && results[n - cards.length] === "skipped";
+        const cls = n < step ? (skipped ? "skip" : "on") : n === step ? "now" : "";
         return <i key={n} className={cls} />;
       })}
     </div>
@@ -72,6 +80,23 @@ export default function LessonPlayer({ slug, lessonIndex, title, questions, next
         <div className="actions">
           {nextHref && <Link href={nextHref} className="btn">Next lesson</Link>}
           <Link href={`/courses/${slug}`} className={nextHref ? "btn ghost" : "btn"}>Back to the path</Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (onCard) {
+    const c = cards[step];
+    return (
+      <div className="player">
+        {bar}
+        <p className="lede" style={{ margin: 0 }}>{title}</p>
+        <h2>{c.title}</h2>
+        <div className="lesson-text">
+          {c.text.split("\n\n").map((para, n) => <p key={n}>{para}</p>)}
+        </div>
+        <div className="actions">
+          <button className="btn" onClick={nextCard}>Continue</button>
         </div>
       </div>
     );
@@ -120,7 +145,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, questions, next
           </>
         ) : (
           <button className="btn" onClick={() => record(isRight ? "correct" : "wrong")}>
-            {i === questions.length - 1 ? "Finish" : "Continue"}
+            {qi === questions.length - 1 ? "Finish" : "Continue"}
           </button>
         )}
       </div>

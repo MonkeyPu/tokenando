@@ -1,53 +1,80 @@
-export type Course = {
-  slug: string;
-  title: string;
-  tab: string;
-  blurb: string;
-  lessons: string[];
-};
+import type { Course } from "./types";
+import { lessons as whatIsAi } from "./content/what-is-ai";
+import { lessons as tokens } from "./content/tokens";
+import { lessons as useItWell } from "./content/use-it-well";
+import { lessons as integrity } from "./content/integrity";
+import { lessons as chooseAModel } from "./content/choose-a-model";
+import { lessons as effects } from "./content/effects";
+import { lessons as localLlms } from "./content/local-llms";
 
-// Lesson titles are placeholders. Real content comes later.
 export const courses: Course[] = [
   {
     slug: "what-is-ai",
     title: "What is AI?",
-    tab: "What is AI?",
-    blurb: "See how AI works by looking inside it.",
-    lessons: ["What counts as AI", "Learning from examples", "Tokens and predictions", "Where AI gets it wrong", "Recap"],
+    blurb: "From Turing to ChatGPT: what AI really is, and what it isn't.",
+    lessons: whatIsAi,
+  },
+  {
+    slug: "tokens",
+    title: "Tokens and meaning",
+    blurb: "How AI reads: tokens, numbers, and why it can't count letters.",
+    lessons: tokens,
+    sources: [
+      "Bergmann, Dave. \"What Is a Context Window?\" IBM Think.",
+      "\"Why Do LLMs Charge More for Non-English Text? Tokenization and Languages.\" AI/TLDR, 13 June 2026.",
+    ],
   },
   {
     slug: "use-it-well",
     title: "Using AI properly",
-    tab: "Using AI",
-    blurb: "Ask better questions and check the answers.",
-    lessons: ["Write a good prompt", "Check the answer", "Keep your info private", "Give credit", "When not to use AI"],
+    blurb: "Ask better questions, check the answers, and stay in charge.",
+    lessons: useItWell,
+    sources: [
+      "\"AI's Cognitive Implications: The Downfall of Our Thinking Skills.\" The European Business Review, 18 Dec. 2024.",
+    ],
   },
   {
-    slug: "ai-in-your-life",
-    title: "AI in your life",
-    tab: "Your life",
-    blurb: "Put AI to work on homework, hobbies and habits.",
-    lessons: ["Homework helper", "Creative projects", "Everyday tools", "Build a routine", "Your AI plan"],
+    slug: "school-and-honesty",
+    title: "AI, school and honesty",
+    blurb: "Where the lines are, how AI detectors work, and how to stay safe.",
+    lessons: integrity,
+  },
+  {
+    slug: "choose-a-model",
+    title: "Choosing the right model",
+    blurb: "Frontier, everyday, fast or cheap? Pick the right tool for the job.",
+    lessons: chooseAModel,
   },
   {
     slug: "effects",
     title: "What AI changes",
-    tab: "Effects",
-    blurb: "How AI affects jobs, school, fairness and the planet.",
-    lessons: ["Jobs", "School", "Fairness and bias", "The planet", "Your say"],
+    blurb: "How AI is reshaping jobs, hiring and the planet.",
+    lessons: effects,
+    sources: [
+      "\"AI Will Reshape More Jobs Than It Replaces.\" Boston Consulting Group, 4 June 2026.",
+      "Lowrey, Annie. \"AI Has Ruined the Job Market.\" The Atlantic, 4 June 2026.",
+      "\"GPU Data Centers: How They Work, Energy Demands, and ROI.\" io.net Blog, 28 May 2026.",
+      "Cunningham, Mary. \"Gadget Prices Have Fallen for Decades. Then AI Happened.\" CBS News, 26 June 2026.",
+    ],
   },
   {
     slug: "local-llms",
     title: "Local LLMs",
-    tab: "Local LLMs",
     blurb: "Run an AI on your own computer, with no internet.",
-    lessons: ["AI on your computer", "Model sizes", "Install one", "Chat offline", "Local vs cloud"],
+    lessons: localLlms,
+  },
+  {
+    slug: "ai-in-your-life",
+    title: "AI in your life",
+    blurb: "Put AI to work on homework, hobbies and habits.",
+    lessons: [],
+    comingSoon: true,
   },
   {
     slug: "make-your-app",
     title: "Make your own app",
-    tab: "Make an app",
     blurb: "Build something real. An AI judge reviews it.",
-    lessons: ["Pick an idea", "Describe it", "Build version one", "Test it", "Meet the AI judge"],
+    lessons: [],
+    comingSoon: true,
   },
 ];

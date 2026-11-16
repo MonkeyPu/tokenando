@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { courses } from "@/lib/courses";
-import { getQuestions } from "@/lib/lessons";
 import LessonPlayer from "@/components/LessonPlayer";
 
 export function generateStaticParams() {
@@ -15,7 +14,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
   if (!course || !Number.isInteger(number) || number < 1 || number > course.lessons.length) notFound();
 
   const index = number - 1;
-  const title = course.lessons[index];
+  const current = course.lessons[index];
   const nextHref = number < course.lessons.length ? `/courses/${slug}/${number + 1}` : null;
 
   return (
@@ -25,8 +24,9 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
         key={`${slug}-${number}`}
         slug={slug}
         lessonIndex={index}
-        title={title}
-        questions={getQuestions(slug, index, title)}
+        title={current.title}
+        cards={current.cards}
+        questions={current.questions}
         nextHref={nextHref}
       />
     </>
