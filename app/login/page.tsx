@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { LOOKS } from "@/lib/assistant";
+import Mascot from "@/components/Mascot";
 
 // Kids sign up with just a username. Supabase needs an email, so we turn the username into a private one.
 // (Turn off "Confirm email" in Supabase so no real email is ever needed.)
@@ -56,6 +58,7 @@ export default function LoginPage() {
     <div className="login">
       <section className="login-hero">
         <div className="wordmark">tokenando <b>junior</b></div>
+        <Mascot look={LOOKS[0]} mood="wave" size={130} />
         <h1>AI is built from tokens.</h1>
         <div className="tokens" aria-hidden>
           {tokens.map((t, i) => (
@@ -77,7 +80,7 @@ export default function LoginPage() {
         </label>
         {error && <p className="error" role="alert">{error}</p>}
         <button className="btn" disabled={busy}>{mode === "login" ? "Log in" : "Create account"}</button>
-        <button type="button" className="linkish" onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); }}>
+        <button type="button" className="btn ghost" onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); }}>
           {mode === "login" ? "New here? Create an account" : "Already have an account? Log in"}
         </button>
       </form>

@@ -5,8 +5,9 @@ create table public.profiles (
   id uuid primary key references auth.users on delete cascade,
   display_name text,
   assistant_name text default 'Tok',
-  assistant_personality text default 'friendly',
-  assistant_look jsonb default '{}',
+  assistant_personality text default 'friendly', -- a preset id, or 'custom'
+  assistant_personality_custom text, -- the student's own description
+  assistant_look jsonb default '{}', -- { preset, custom, description }
   voice_enabled boolean default false,
   streak_count int default 0,
   last_active date

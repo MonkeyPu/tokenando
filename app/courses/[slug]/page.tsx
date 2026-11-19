@@ -14,7 +14,7 @@ export default async function CoursePath({ params }: { params: Promise<{ slug: s
 
   return (
     <>
-      <Link href="/courses" className="linkish">All courses</Link>
+      <Link href="/courses" className="btn red small">All courses</Link>
       <h1 style={{ marginTop: "1rem" }}>{course.title}</h1>
       <p className="lede">{course.blurb}</p>
       {course.comingSoon ? (

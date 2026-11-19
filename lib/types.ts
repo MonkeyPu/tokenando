@@ -1,4 +1,7 @@
-export type Card = { title: string; text: string };
+import type { Mood, Prop } from "./assistant";
+
+// `scene` is optional. Without it the mascot picks a mood for the card automatically.
+export type Card = { title: string; text: string; scene?: { mood?: Mood; prop?: Prop } };
 
 export type Question = {
   prompt: string;

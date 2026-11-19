@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { courses } from "@/lib/courses";
-import LogoutButton from "@/components/LogoutButton";
+import AssistantHero from "@/components/AssistantHero";
 
 export default function CoursesPage() {
   return (
     <>
+      <AssistantHero />
       <h1>Pick a course</h1>
       <p className="lede">Start anywhere. You can skip what you already know.</p>
       <div className="grid">
@@ -24,7 +25,6 @@ export default function CoursesPage() {
           )
         )}
       </div>
-      <p style={{ marginTop: "3rem" }}><LogoutButton /></p>
     </>
   );
 }

@@ -19,7 +19,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
 
   return (
     <>
-      <Link href={`/courses/${slug}`} className="linkish">Back to {course.title}</Link>
+      <Link href={`/courses/${slug}`} className="btn red small">Back to course</Link>
       <LessonPlayer
         key={`${slug}-${number}`}
         slug={slug}
