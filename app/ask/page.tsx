@@ -69,7 +69,7 @@ export default function AskPage() {
       </div>
 
       <div className="chat" aria-live="polite">
-        <div className="msg bot">{say(personality.lines.greet, 0, name)}</div>
+        <div className="msg bot">{say(personality.lines.greet, 0, { name, lesson: "how AI works" })}</div>
         {msgs.map((m, i) => (
           <div key={i} className={`msg ${m.role === "user" ? "me" : "bot"}`}>{m.text}</div>
         ))}

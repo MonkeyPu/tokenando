@@ -52,7 +52,9 @@ export function sanitizeLook(raw: unknown): Look | null {
   };
 }
 
-export type Lines = Record<"greet" | "card" | "ask" | "correct" | "wrong" | "skip" | "finish" | "offline", string[]>;
+// Lesson lines can mention {name}, {lesson}, {card}, {q}, {answer}, {picked}, {explain} and {score},
+// so the mascot talks about the card or question that is actually on screen.
+export type Lines = Record<"greet" | "card" | "ask" | "hint" | "correct" | "wrong" | "skip" | "finish" | "offline", string[]>;
 
 export type Personality = {
   id: string;
@@ -63,13 +65,14 @@ export type Personality = {
 };
 
 const NEUTRAL: Lines = {
-  greet: ["Hi, I'm {name}! Let's learn something."],
-  card: ["Take a look at this.", "Here's the next idea."],
-  ask: ["Your turn!", "Give it a go."],
-  correct: ["Nice one!", "That's right!"],
-  wrong: ["Not quite. Read the explanation.", "Close! Have a look at why."],
-  skip: ["No problem, skipping is fine.", "Skipped!"],
-  finish: ["Lesson complete. Well done!"],
+  greet: ["Hi, I'm {name}. Today: {lesson}."],
+  card: ["Next up: {card}."],
+  ask: ["Your turn: {q}"],
+  hint: ["Here's a nudge: {explain}"],
+  correct: ["Yes — {answer}"],
+  wrong: ["You picked {picked}. Read the note below."],
+  skip: ["Skipping {card} for now."],
+  finish: ["Done with {lesson} — {score}."],
   offline: ["I'm not connected yet, but I know a few basics. Try asking about tokens!"],
 };
 
@@ -80,13 +83,14 @@ export const PERSONALITIES: Personality[] = [
     blurb: "Warm, encouraging and patient.",
     prompt: "Warm, encouraging and patient. Celebrate effort and explain things in simple, everyday language.",
     lines: {
-      greet: ["Hi, I'm {name}! Ready to learn something cool?", "Hey there! {name} here. Let's get started."],
-      card: ["Here's the key idea.", "Take a look at this part.", "This bit is worth remembering."],
-      ask: ["Your turn! Take your time.", "What do you think?"],
-      correct: ["Nice work!", "You got it!"],
-      wrong: ["Not quite, but that's how we learn.", "Close! Check the explanation."],
-      skip: ["No problem, skipping is fine.", "Skipped! You can come back later."],
-      finish: ["Lesson complete! Great job.", "Another one done. Proud of you!"],
+      greet: ["Hi, I'm {name}. Today: {lesson}.", "{name} here. Up next: {lesson}."],
+      card: ["Next bit: {card}.", "Here's {card} — worth a read.", "{card}. This one comes up in the quiz."],
+      ask: ["Your turn: {q}", "{q} Take your time."],
+      hint: ["A nudge, not the answer: {explain}", "Think back to {card} — {explain}"],
+      correct: ["Yes — {answer}", "Exactly: {answer}", "That's the one: {answer}"],
+      wrong: ["You went with {picked}. The note below explains why.", "Careful — {picked} isn't it. Have a look below."],
+      skip: ["Skipping {q} for now — it'll come round again.", "No problem. {q} can wait."],
+      finish: ["Done with {lesson} — {score}. Nice work.", "Finished {lesson} — {score}."],
       offline: ["My brain isn't connected yet, but I'm working on it! Try asking about tokens or LLMs.", "I can't think that far yet. Soon! For now I know a few basics."],
     },
   },
@@ -96,13 +100,14 @@ export const PERSONALITIES: Personality[] = [
     blurb: "Relaxed and casual, never preachy.",
     prompt: "Relaxed and casual, like a laid-back older friend. Keep it light and never preachy.",
     lines: {
-      greet: ["Yo, {name} here. No rush, let's learn.", "Hey. Chill, we've got time."],
-      card: ["Check this out.", "Kinda cool, right?", "Quick one, then we move on."],
-      ask: ["Whenever you're ready.", "No pressure, give it a go."],
-      correct: ["Smooth.", "Yep, nailed it."],
-      wrong: ["Eh, nearly. Happens.", "No stress, read the note and move on."],
-      skip: ["All good, skipping is cool.", "Fair. Onwards."],
-      finish: ["Done. Nice and easy.", "Lesson finished. Solid work."],
+      greet: ["Yo, {name} here. Up next: {lesson}.", "Hey. {lesson} — no rush."],
+      card: ["Check this: {card}.", "{card} — kinda cool, right?", "Quick one: {card}."],
+      ask: ["{q} Whenever you're ready.", "Your call: {q}"],
+      hint: ["Not giving it away, but: {explain}", "Little nudge: {explain}"],
+      correct: ["Smooth. {answer}", "Yep — {answer}"],
+      wrong: ["Eh, nearly. You went {picked}.", "No stress. {picked} wasn't it — note's below."],
+      skip: ["Fair. {q} can wait.", "All good — skipping {q} for now."],
+      finish: ["Done with {lesson}. {score}.", "That's it — {lesson} wrapped. {score}."],
       offline: ["My brain isn't plugged in yet. Soon though.", "Can't answer that one yet, I'm still waking up."],
     },
   },
@@ -112,13 +117,14 @@ export const PERSONALITIES: Personality[] = [
     blurb: "Loves questions and experiments.",
     prompt: "Endlessly curious and enthusiastic about science. Ask the student questions that make them think.",
     lines: {
-      greet: ["Hello! I'm {name}. Shall we investigate how AI works?", "Great to see you! So many questions to explore."],
-      card: ["Fascinating, isn't it?", "Here's something worth wondering about.", "Notice anything interesting here?"],
-      ask: ["Let's test your hypothesis.", "What's your best guess?"],
-      correct: ["Excellent! Your hypothesis holds.", "Correct! Science wins."],
-      wrong: ["Interesting! Wrong results teach us too.", "Not this time. Let's see why."],
-      skip: ["Skipped for now. Curiosity can wait.", "Okay, we'll revisit that experiment later."],
-      finish: ["Experiment complete! Great data.", "Lesson finished. What will you wonder next?"],
+      greet: ["Hello! I'm {name}. Today's topic: {lesson}.", "Great to see you. We're on {lesson}."],
+      card: ["Fascinating: {card}.", "Look closely at {card}.", "{card} — notice anything odd?"],
+      ask: ["{q} What's your best guess?", "Hypothesis time: {q}"],
+      hint: ["Evidence, not the answer: {explain}", "Investigate this: {explain}"],
+      correct: ["Correct! {answer}", "Excellent — {answer}"],
+      wrong: ["Interesting. {picked} doesn't fit — here's why below.", "Wrong guess, good instinct. The note explains."],
+      skip: ["Skipped {q}. Curiosity can wait.", "Okay — we'll revisit {q} later."],
+      finish: ["Experiment complete. {score} on {lesson}.", "Done with {lesson} — {score}. What will you wonder next?"],
       offline: ["My lab isn't connected yet. Try one of the basics!", "I need my API equipment first. Stay curious!"],
     },
   },
@@ -128,13 +134,14 @@ export const PERSONALITIES: Personality[] = [
     blurb: "Patient, wise and to the point.",
     prompt: "Calm, patient and wise. Short, thoughtful answers that guide the student step by step.",
     lines: {
-      greet: ["Welcome. I'm {name}. We'll take it step by step.", "Good to see you. Let's begin."],
-      card: ["Read this carefully.", "One idea at a time.", "This is the heart of it."],
-      ask: ["Think it through.", "Take a breath, then answer."],
-      correct: ["Well reasoned.", "Correct. Good thinking."],
-      wrong: ["Not quite. Reflect on the explanation.", "A useful mistake. Look again."],
-      skip: ["Fine. Return when you're ready.", "Skipping is a choice. Come back to it."],
-      finish: ["Well done. Every lesson builds on the last.", "Lesson complete. Rest, then continue."],
+      greet: ["Welcome. I'm {name}. Today: {lesson}.", "Good to see you. Today: {lesson}."],
+      card: ["Read {card} carefully.", "One idea at a time: {card}.", "This is the heart of it: {card}."],
+      ask: ["{q} Think it through.", "Take a breath: {q}"],
+      hint: ["Reason it out: {explain}", "A hint, not the answer: {explain}"],
+      correct: ["Well reasoned. {answer}", "Correct — {answer}"],
+      wrong: ["Not quite. You chose {picked}; reflect on the note.", "A useful mistake. {picked} — read why."],
+      skip: ["Fine. Return to {q} when you're ready.", "Skipping {q} is a choice. Come back to it."],
+      finish: ["Done with {lesson} — {score}. Every lesson builds on the last.", "Well done. {score} on {lesson}."],
       offline: ["I can't reach my full wisdom yet. Ask me a basic question.", "My connection isn't ready. Patience."],
     },
   },
@@ -144,13 +151,14 @@ export const PERSONALITIES: Personality[] = [
     blurb: "Playful, with light clean humour.",
     prompt: "Playful with light, clean humour and puns. Keep the jokes short and never at the student's expense.",
     lines: {
-      greet: ["Hey! {name} here. I'm tokenly excited to learn!", "Ready? I only tell 80% accurate jokes. Let's go!"],
-      card: ["Plot twist coming...", "Fun fact incoming!", "Pay attention, there's a quiz. Probably."],
-      ask: ["Drumroll please...", "No pressure. Okay, a little."],
-      correct: ["Boom! Nailed it!", "You're on a roll!"],
-      wrong: ["Oof! Even robots miss sometimes.", "Wrong answer, great attitude though."],
-      skip: ["Skipping? Bold. I respect it.", "Skip! Like a stone on a lake."],
-      finish: ["Lesson done! Confetti time!", "And that's a wrap! Take a bow."],
+      greet: ["Hey! {name} here. Today's episode: {lesson}.", "Ready? Up next: {lesson}. I'm {name}."],
+      card: ["Plot twist: {card}.", "Fun fact incoming — {card}.", "{card}. Pay attention, there's a quiz. Probably."],
+      ask: ["Drumroll: {q}", "{q} No pressure. Okay, a little."],
+      hint: ["Not the answer, but a hint: {explain}", "Free hint, no joke: {explain}"],
+      correct: ["Boom! {answer}", "You're on a roll — {answer}"],
+      wrong: ["Oof. {picked}? The note below is your friend.", "Wrong one — {picked}. Great attitude though."],
+      skip: ["Skipping {q}? Bold. I respect it.", "Skip! {q} will be waiting."],
+      finish: ["Done with {lesson}! {score}. Confetti time.", "And that's a wrap on {lesson} — {score}."],
       offline: ["My brain is buffering. Ask me the basics!", "Joke's on me: I'm not connected yet!"],
     },
   },
@@ -160,13 +168,14 @@ export const PERSONALITIES: Personality[] = [
     blurb: "Short, honest, no fluff.",
     prompt: "Direct and concise. No fluff, honest, get to the point quickly while staying kind.",
     lines: {
-      greet: ["I'm {name}. Let's get to it.", "Ready when you are."],
-      card: ["Key point.", "Read this.", "This matters."],
-      ask: ["Answer.", "Your call."],
-      correct: ["Correct.", "Right."],
-      wrong: ["Incorrect. Read why.", "Wrong. Learn from it."],
-      skip: ["Skipped.", "Noted. Moving on."],
-      finish: ["Done. Next.", "Lesson complete."],
+      greet: ["I'm {name}. Today: {lesson}.", "Ready. {lesson} — let's get to it."],
+      card: ["Key point: {card}.", "Read {card}.", "{card}. This matters."],
+      ask: ["{q} Answer.", "Your call: {q}"],
+      hint: ["Hint: {explain}", "Clue: {explain}"],
+      correct: ["Correct: {answer}", "Right — {answer}"],
+      wrong: ["Wrong. You picked {picked}. Read why.", "Incorrect — {picked}. Learn from it."],
+      skip: ["Skipped {q}.", "Noted. Moving past {q}."],
+      finish: ["Done with {lesson}. {score}. Next.", "Complete: {lesson} — {score}."],
       offline: ["Not connected yet. Try a basic question.", "Can't answer that yet."],
     },
   },
@@ -228,10 +237,60 @@ export function resolvePersonality(s: AssistantSettings): Personality {
   };
 }
 
-// Picks a line without randomness, so the server and browser always agree.
-export function say(lines: string[], n: number, name: string): string {
-  const line = lines[Math.abs(n) % lines.length];
-  return line.split("{name}").join(name);
+// The facts a lesson line can mention. Anything left out falls back to a neutral phrase,
+// so the same line still reads properly on a page with no lesson in it (like the Courses hero).
+export type SayVars = {
+  name: string;
+  lesson?: string;
+  card?: string;
+  q?: string;
+  answer?: string;
+  picked?: string;
+  explain?: string;
+  score?: string;
+};
+
+const SAY_DEFAULTS: Record<string, string> = {
+  lesson: "something new",
+  card: "this bit",
+  q: "this question",
+  answer: "the right answer",
+  picked: "that option",
+  explain: "read the note below",
+  score: "all done",
+};
+
+// Shortens text for a speech bubble on a word boundary.
+export function clip(text: string, max = 42): string {
+  const t = text.replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > max * 0.6 ? cut.slice(0, space) : cut).replace(/[\s,.;:!?—–-]+$/, "")}…`;
+}
+
+// Quotes a choice so it reads naturally inside a sentence: “cereal”.
+export function quoted(text: string, max = 42): string {
+  return `“${clip(text, max)}”`;
+}
+
+// Picks a line without randomness, so the server and browser always agree,
+// then fills in the lesson, card, question or answer it refers to.
+export function say(lines: string[], n: number, vars: SayVars | string): string {
+  const v: Record<string, string | undefined> = typeof vars === "string" ? { name: vars } : vars;
+  const filled = lines[Math.abs(n) % lines.length]
+    .replace(/\{(\w+)\}/g, (_match, key: string) => v[key] ?? SAY_DEFAULTS[key] ?? "")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/\s+([.,:;!?])/g, "$1")
+    // A title or option that already ends in ? ! ” or … keeps its own stop: "token?." → "token?".
+    .replace(/([?!”…!])[.,;:?!]+/g, "$1")
+    .trim();
+  // A line never ends on a doubled stop ("4/4.." → "4/4."), but a real ellipsis survives.
+  return filled.replace(/([.,;:!?…])[.,;:!?…]+$/, (run) => {
+    const strong = run.match(/[?!]/);
+    if (strong) return strong[0];
+    return run.includes("…") || run === "..." ? "…" : ".";
+  });
 }
 
 export function buildSystemPrompt(name: string, personality: { custom: boolean; text: string }): string {

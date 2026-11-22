@@ -6,7 +6,7 @@ import Confetti from "./Confetti";
 import SpeechBubble from "./SpeechBubble";
 import type { Card, Question } from "@/lib/types";
 import { saveLesson } from "@/lib/progress";
-import { say, type Mood, type Prop } from "@/lib/assistant";
+import { say, clip, quoted, type Mood, type Prop, type SayVars } from "@/lib/assistant";
 import Mascot from "./Mascot";
 import { useAssistant } from "./AssistantProvider";
 
@@ -48,6 +48,17 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
   const q = questions[qi];
   const lines = personality.lines;
   const n = lessonIndex * 7 + step;
+
+  // Everything the mascot is allowed to mention, so its line matches what's on screen.
+  const vars: SayVars = {
+    name,
+    lesson: title,
+    card: onCard ? cards[step]?.title : cards[cards.length - 1]?.title,
+    q: q ? quoted(q.prompt, 70) : undefined,
+    answer: q ? quoted(q.options[q.answer]) : undefined,
+    picked: q && picked[qi] !== null ? quoted(q.options[picked[qi] as number]) : undefined,
+    explain: q ? clip(firstSentence(q.explanation), 120) : undefined,
+  };
 
   function resultsOf(p: (number | null)[], c: boolean[]): Result[] {
     return questions.map((question, i) => (c[i] ? (p[i] === question.answer ? "correct" : "wrong") : "skipped"));
@@ -175,7 +186,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
     return (
       <div className="player">
         {bar}
-        {stage("celebrate", say(lines.finish, n, name))}
+        {stage("celebrate", say(lines.finish, n, { ...vars, score: `${right} of ${questions.length} right` }))}
         <h2>Lesson finished</h2>
         <p className="lede">
           You got {right} of {questions.length} right.
@@ -207,7 +218,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
     return (
       <div className="player">
         {bar}
-        {stage(mood, say(first ? lines.greet : lines.card, n, name), prop)}
+        {stage(mood, say(first ? lines.greet : lines.card, n, vars), prop)}
         <p className="lede" style={{ margin: 0 }}>{title}</p>
         <h2>{c.title}</h2>
         <div className="lesson-text" key={step}>
@@ -227,14 +238,14 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
 
   const hinted = Boolean(hints[qi]);
   let mood: Mood = "think";
-  let text = say(justSkipped ? lines.skip : lines.ask, n, name);
+  let text = say(justSkipped ? lines.skip : lines.ask, n, vars);
   if (!isChecked && hinted) {
     mood = "hint";
-    text = firstSentence(q.explanation);
+    text = say(lines.hint, n, vars);
   }
   if (isChecked) {
     mood = isRight ? "cheer" : "oops";
-    text = say(isRight ? lines.correct : lines.wrong, n, name);
+    text = say(isRight ? lines.correct : lines.wrong, n, vars);
   }
 
   return (

@@ -10,7 +10,7 @@ export default function AssistantHero() {
   return (
     <div className="stage">
       <Mascot look={look} mood="wave" size={120} />
-      <div className="bubble">{say(personality.lines.greet, 0, name)}</div>
+      <div className="bubble">{say(personality.lines.greet, 0, { name, lesson: "a new lesson" })}</div>
     </div>
   );
 }
