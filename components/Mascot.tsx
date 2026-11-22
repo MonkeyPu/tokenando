@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from "react";
 import type { Look, Mood, Prop } from "@/lib/assistant";
+import Confetti from "./Confetti";
 
 // The mascot is drawn from a Look (shape, colours, eyes, accessory), so any look works with
 // every animation. The animations live in globals.css and are driven by the mood class.
@@ -24,6 +26,7 @@ const DEFAULT_PROP: Record<Mood, Prop> = {
   wave: "none",
   point: "none",
   think: "question",
+  hint: "lightbulb",
   cheer: "sparkles",
   oops: "sweat",
   celebrate: "sparkles",
@@ -100,13 +103,14 @@ function Arm({ look, side }: { look: Look; side: "l" | "r" }) {
   );
 }
 
-function Eyes({ look, mood, ink }: { look: Look; mood: Mood; ink: string }) {
+function Eyes({ look, mood, ink, gaze }: { look: Look; mood: Mood; ink: string; gaze: { x: number; y: number } }) {
   const f = FACE[look.shape];
   const happy = mood === "cheer" || mood === "celebrate";
-  const px = mood === "think" ? -3 : 0;
-  const py = mood === "think" ? -4 : 0;
+  const px = mood === "think" ? -3 : mood === "hint" ? 3 : 0;
+  const py = mood === "think" ? -4 : mood === "hint" ? -5 : 0;
   return (
     <g className={happy ? "" : "m-eyes"}>
+      <g transform={`translate(${gaze.x} ${gaze.y})`}>
       {f.ex.map((x, i) => {
         const y = f.ey;
         if (happy) {
@@ -136,11 +140,12 @@ function Eyes({ look, mood, ink }: { look: Look; mood: Mood; ink: string }) {
           </g>
         );
       })}
+      </g>
     </g>
   );
 }
 
-function Mouth({ look, mood, ink }: { look: Look; mood: Mood; ink: string }) {
+function MouthShape({ look, mood, ink }: { look: Look; mood: Mood; ink: string }) {
   const y = FACE[look.shape].my;
   if (mood === "cheer" || mood === "celebrate" || mood === "wave") {
     return (
@@ -150,9 +155,19 @@ function Mouth({ look, mood, ink }: { look: Look; mood: Mood; ink: string }) {
       </g>
     );
   }
+  if (mood === "hint") return <ellipse cx="100" cy={y + 5} rx="6" ry="7" fill={ink} />;
   if (mood === "think") return <path d={`M92 ${y + 3} L106 ${y + 1}`} stroke={ink} strokeWidth="4" strokeLinecap="round" />;
   if (mood === "oops") return <path d={`M90 ${y + 8} Q100 ${y - 3} 110 ${y + 8}`} stroke={ink} strokeWidth="4" fill="none" strokeLinecap="round" />;
   return <path d={`M88 ${y} Q100 ${y + 9} 112 ${y}`} stroke={ink} strokeWidth="4" fill="none" strokeLinecap="round" />;
+}
+
+// The mouth flaps while the mascot is talking (see .talking .m-mouth in globals.css).
+function Mouth(props: { look: Look; mood: Mood; ink: string }) {
+  return (
+    <g className="m-mouth">
+      <MouthShape {...props} />
+    </g>
+  );
 }
 
 function Accessory({ look }: { look: Look }) {
@@ -241,25 +256,67 @@ function PropArt({ prop }: { prop: Prop }) {
   }
 }
 
-const CONFETTI = ["#7AFB6A", "#ffe066", "#ff7a7a", "#6ec6ff", "#c9a7ff", "#ffb454"];
+type Props = { look: Look; mood?: Mood; prop?: Prop; size?: number; speaking?: boolean; lively?: boolean };
 
-function Confetti() {
-  return (
-    <div className="confetti" aria-hidden>
-      {Array.from({ length: 18 }, (_, i) => (
-        <span key={i} style={{ ["--x" as string]: `${(i * 37) % 100}%`, ["--c" as string]: CONFETTI[i % CONFETTI.length], ["--d" as string]: `${(i % 6) * 0.25}s`, ["--t" as string]: `${1.6 + (i % 4) * 0.3}s` }} />
-      ))}
-    </div>
-  );
-}
+// Little fidgets the mascot does when nothing else is happening.
+const ANTICS = ["antic-hop", "antic-look", "antic-wiggle"] as const;
 
-type Props = { look: Look; mood?: Mood; prop?: Prop; size?: number };
-
-export default function Mascot({ look, mood = "idle", prop, size = 140 }: Props) {
+export default function Mascot({ look, mood = "idle", prop, size = 140, speaking = false, lively = true }: Props) {
   const ink = look.shape === "robot" ? (lum(look.accent) > 0.5 ? look.accent : "#e8fff0") : INK;
   const shownProp = prop ?? DEFAULT_PROP[mood];
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [gaze, setGaze] = useState({ x: 0, y: 0 });
+  const [antic, setAntic] = useState("");
+
+  // The pupils follow the pointer, so the mascot always looks like it is paying attention.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let frame = 0;
+    function onMove(e: PointerEvent) {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        const box = ref.current?.getBoundingClientRect();
+        if (!box) return;
+        const dx = e.clientX - (box.left + box.width / 2);
+        const dy = e.clientY - (box.top + box.height * 0.45);
+        const dist = Math.hypot(dx, dy) || 1;
+        const reach = Math.min(1, dist / 260) * 4;
+        setGaze({ x: (dx / dist) * reach, y: (dy / dist) * reach });
+      });
+    }
+    window.addEventListener("pointermove", onMove);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  // Between steps the mascot fidgets, so the page never feels frozen.
+  useEffect(() => {
+    if (!lively) return;
+    if (mood === "cheer" || mood === "celebrate" || mood === "oops") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let show = 0;
+    let hide = 0;
+    function schedule() {
+      show = window.setTimeout(() => {
+        setAntic(ANTICS[Math.floor(Math.random() * ANTICS.length)]);
+        hide = window.setTimeout(() => {
+          setAntic("");
+          schedule();
+        }, 950);
+      }, 3600 + Math.random() * 3800);
+    }
+    schedule();
+    return () => {
+      window.clearTimeout(show);
+      window.clearTimeout(hide);
+    };
+  }, [lively, mood]);
+
   return (
-    <div className="mascot" style={{ width: size, height: size }} aria-hidden>
+    <div ref={ref} className={`mascot ${speaking ? "talking" : ""} ${antic}`} style={{ width: size, height: size }} aria-hidden>
       <div key={mood} className={`mascot-pop mood-${mood}`}>
         <svg viewBox="0 0 200 200">
           <ellipse className="m-shadow" cx="100" cy="188" rx="48" ry="7" fill="#000" opacity="0.18" />
@@ -273,7 +330,7 @@ export default function Mascot({ look, mood = "idle", prop, size = 140 }: Props)
             <Body look={look} />
             <Arm look={look} side="l" />
             <Arm look={look} side="r" />
-            <Eyes look={look} mood={mood} ink={ink} />
+            <Eyes look={look} mood={mood} ink={ink} gaze={gaze} />
             <Mouth look={look} mood={mood} ink={ink} />
             <Accessory look={look} />
             <PropArt prop={shownProp} />

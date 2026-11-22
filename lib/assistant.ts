@@ -17,7 +17,7 @@ export type Look = {
   accessory: Accessory;
 };
 
-export type Mood = "idle" | "wave" | "point" | "think" | "cheer" | "oops" | "celebrate";
+export type Mood = "idle" | "wave" | "point" | "think" | "hint" | "cheer" | "oops" | "celebrate";
 export type Prop = "none" | "lightbulb" | "question" | "book" | "sparkles" | "sweat";
 
 export const SHAPES: Shape[] = ["blob", "robot", "cat"];
