@@ -7,6 +7,7 @@ import Mascot from "@/components/Mascot";
 import LogoutButton from "@/components/LogoutButton";
 import { useAssistant } from "@/components/AssistantProvider";
 import type { Mood } from "@/lib/assistant";
+import { resetProgress } from "@/lib/progress";
 
 export default function ProfilePage() {
   const { settings, ready, save } = useAssistant();
@@ -17,6 +18,9 @@ export default function ProfilePage() {
   const [status, setStatus] = useState("");
   const [lookMsg, setLookMsg] = useState("");
   const [creating, setCreating] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [resetMsg, setResetMsg] = useState("");
 
   useEffect(() => {
     if (ready && !loaded) {
@@ -83,6 +87,20 @@ export default function ProfilePage() {
   async function onSave() {
     const ok = await save(draft);
     setStatus(ok ? "Saved!" : "Saved on this device, but it couldn't sync to your account yet.");
+  }
+
+  async function onReset() {
+    setResetting(true);
+    setMood("oops");
+    const ok = await resetProgress();
+    setMood("idle");
+    setResetting(false);
+    if (ok) {
+      setConfirmReset(false);
+      setResetMsg("All progress cleared. Every course is back to lesson 1.");
+    } else {
+      setResetMsg("Couldn't reset your progress. Check your connection and try again.");
+    }
   }
 
   return (
@@ -164,6 +182,31 @@ export default function ProfilePage() {
           <button className="btn" onClick={onSave}>Save</button>
           {status && <span className="notice" role="status">{status}</span>}
         </div>
+      </section>
+
+      <section className="panel danger-zone">
+        <h2>Reset progress</h2>
+        <p className="lede" style={{ marginBottom: "1rem" }}>
+          Deletes every finished and skipped lesson and sets your streak back to zero. Your assistant&apos;s name, personality and look stay as they are.
+        </p>
+
+        {!confirmReset ? (
+          <div className="actions">
+            <button className="btn red" onClick={() => { setResetMsg(""); setConfirmReset(true); }}>
+              Reset all progress
+            </button>
+            {resetMsg && <span className="notice" role="status">{resetMsg}</span>}
+          </div>
+        ) : (
+          <div className="actions" role="alertdialog" aria-label="Confirm reset">
+            <button className="btn red" onClick={onReset} disabled={resetting}>
+              {resetting ? "Resetting…" : "Yes, delete my progress"}
+            </button>
+            <button className="btn ghost" onClick={() => setConfirmReset(false)} disabled={resetting}>
+              Cancel
+            </button>
+          </div>
+        )}
       </section>
 
       <p style={{ marginTop: "2.5rem" }}><LogoutButton /></p>

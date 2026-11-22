@@ -42,6 +42,21 @@ export async function saveLesson(slug: string, index: number, status: Status): P
   return true;
 }
 
+// Wipes every finished/skipped lesson and the streak. Assistant settings stay.
+// Returns true if the progress was cleared.
+export async function resetProgress(): Promise<boolean> {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const user = sessionData.session?.user;
+  if (!user) return false;
+
+  const { error } = await supabase.from("lesson_progress").delete().eq("user_id", user.id);
+  if (error) return false;
+
+  // Streak is a separate column on profiles; a failure there shouldn't undo the reset above.
+  await supabase.from("profiles").update({ streak_count: 0, last_active: null }).eq("id", user.id);
+  return true;
+}
+
 export async function loadProgress(slug: string): Promise<Record<number, Status>> {
   const { data } = await supabase.from("lesson_progress").select("lesson_index,status").eq("course_slug", slug);
   const out: Record<number, Status> = {};
