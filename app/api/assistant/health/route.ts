@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { provider } from "@/lib/llm";
+import { GEMINI_MODELS, provider } from "@/lib/llm";
 
 // Read-only diagnosis for "the mascot won't talk". Reports WHICH provider is
 // configured and whether the key is accepted — never the key itself.
@@ -67,15 +67,25 @@ export async function GET() {
   const which = provider();
   const geminiKey = process.env.GEMINI_API_KEY ?? "";
   const anthropicKey = process.env.ANTHROPIC_API_KEY ?? "";
-  const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const geminiModel = process.env.GEMINI_MODEL || "";
   const anthropicModel = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
+
+  // Test every model name in the fallback chain, so it's obvious which one the
+  // key is actually allowed to use — that's what a retired name looks like.
+  const live =
+    which === "gemini"
+      ? await Promise.all(
+          GEMINI_MODELS.map(async (model) => ({ model, ...(await testGemini(geminiKey, model)) }))
+        )
+      : null;
 
   const body = {
     provider: which, // "gemini" | "anthropic" | null
-    route: which === "gemini" ? geminiModel : which === "anthropic" ? anthropicModel : null,
+    route: which === "gemini" ? GEMINI_MODELS : which === "anthropic" ? [anthropicModel] : [],
+    modelOverride: geminiModel || null,
     gemini: shape(geminiKey),
     anthropic: shape(anthropicKey),
-    live: which === "gemini" ? await testGemini(geminiKey, geminiModel) : null,
+    live,
   };
 
   cache = { at: Date.now(), body };

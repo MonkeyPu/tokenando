@@ -6,8 +6,17 @@
 
 export type Msg = { role: "user" | "assistant"; text: string };
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// Google retires model names for newly created keys — 2.5 Flash just did that
+// ("no longer available to new users"). So the name is env-overridable and a
+// *-latest alias is tried if the primary 404s; otherwise a retired name means
+// silence forever with no clue why.
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+const GEMINI_FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || "gemini-flash-latest";
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
+
+export const GEMINI_MODELS = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL].filter(
+  (m, i, all) => Boolean(m) && all.indexOf(m) === i
+);
 
 export type Provider = "gemini" | "anthropic" | null;
 
@@ -30,25 +39,33 @@ async function viaGemini(system: string, messages: Msg[], maxTokens: number): Pr
     .filter((m, i) => !(i === 0 && m.role === "assistant"))
     .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.text }] }));
 
-  const generationConfig: Record<string, unknown> = { maxOutputTokens: maxTokens, temperature: 0.9 };
-  // 2.5 Flash thinks before answering unless told not to; that burns free-tier
-  // tokens and latency on what are one-line replies. Pro models refuse 0.
-  if (!/pro/i.test(GEMINI_MODEL)) generationConfig.thinkingConfig = { thinkingBudget: 0 };
+  let res: Response | null = null;
+  for (const model of GEMINI_MODELS) {
+    const generationConfig: Record<string, unknown> = { maxOutputTokens: maxTokens, temperature: 0.9 };
+    // 2.5 Flash thinks before answering unless told not to; that burns free-tier
+    // tokens and latency on what are one-line replies. Pro models refuse 0.
+    if (!/pro/i.test(model)) generationConfig.thinkingConfig = { thinkingBudget: 0 };
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent`,
-    {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: system }] },
-        contents,
-        generationConfig,
-      }),
-      signal: AbortSignal.timeout(25000),
-    }
-  );
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-goog-api-key": key },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents,
+          generationConfig,
+        }),
+        signal: AbortSignal.timeout(25000),
+      }
+    );
 
+    // 404 = this model name isn't offered to this key, so try the next one.
+    // 429/400/403 are real answers about the request, so stop there.
+    if (res.status !== 404) break;
+  }
+
+  if (!res) return { ok: false, error: "upstream", status: 502 };
   if (res.status === 429) return { ok: false, error: "slow_down", status: 429 };
   if (!res.ok) return { ok: false, error: "upstream", status: 502 };
 
