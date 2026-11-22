@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { DEFAULT_SETTINGS, PERSONALITIES, buildSystemPrompt, cleanName } from "@/lib/assistant";
+import { generateText, provider } from "@/lib/llm";
 
 export const runtime = "nodejs";
 
@@ -15,9 +16,8 @@ function tooMany(user: string) {
 }
 
 export async function POST(req: Request) {
-  const key = process.env.ANTHROPIC_API_KEY;
-  // No key yet: the app shows the assistant's "not connected" message.
-  if (!key) return NextResponse.json({ error: "not_configured" }, { status: 503 });
+  // No provider configured yet: the app shows the assistant's "not connected" message.
+  if (!provider()) return NextResponse.json({ error: "not_configured" }, { status: 503 });
 
   const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   const messages = (body?.messages ?? [])
     .filter((m) => (m.role === "user" || m.role === "assistant") && typeof m.text === "string" && m.text.trim())
     .slice(-20)
-    .map((m) => ({ role: m.role as "user" | "assistant", content: (m.text as string).trim().slice(0, 1000) }));
+    .map((m) => ({ role: m.role as "user" | "assistant", text: (m.text as string).trim().slice(0, 1000) }));
   if (messages.length === 0 || messages[messages.length - 1].role !== "user") {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
@@ -54,18 +54,7 @@ export async function POST(req: Request) {
     custom ? { custom: true, text: (row!.assistant_personality_custom as string).slice(0, 300) } : { custom: false, text: (preset ?? PERSONALITIES[0]).prompt }
   );
 
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5", max_tokens: 500, system, messages }),
-      signal: AbortSignal.timeout(25000),
-    });
-    if (!res.ok) return NextResponse.json({ error: "upstream" }, { status: 502 });
-    const data = (await res.json()) as { content?: { type: string; text?: string }[] };
-    const reply = (data.content ?? []).filter((b) => b.type === "text").map((b) => b.text).join("").trim();
-    return NextResponse.json({ reply });
-  } catch {
-    return NextResponse.json({ error: "upstream" }, { status: 502 });
-  }
+  const result = await generateText({ system, messages, maxTokens: 500 });
+  if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
+  return NextResponse.json({ reply: result.text });
 }
