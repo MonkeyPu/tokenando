@@ -108,9 +108,18 @@ function Eyes({ look, mood, ink, gaze }: { look: Look; mood: Mood; ink: string; 
   const happy = mood === "cheer" || mood === "celebrate";
   const px = mood === "think" ? -3 : mood === "hint" ? 3 : 0;
   const py = mood === "think" ? -4 : mood === "hint" ? -5 : 0;
+  // The eyeball itself never moves — only the pupil slides inside it, clamped so it can't
+  // break out of the white of the eye. Dot eyes have no sclera, so there the dot *is* the
+  // pupil and gets a tighter limit so it reads as a glance, not a slide.
+  const maxR = look.eyes === "round" ? 5 : 3.5;
+  const gx = gaze.x + px;
+  const gy = gaze.y + py;
+  const gm = Math.hypot(gx, gy) || 1;
+  const k = gm > maxR ? maxR / gm : 1;
+  const ox = gx * k;
+  const oy = gy * k;
   return (
     <g className={happy ? "" : "m-eyes"}>
-      <g transform={`translate(${gaze.x} ${gaze.y})`}>
       {f.ex.map((x, i) => {
         const y = f.ey;
         if (happy) {
@@ -121,12 +130,13 @@ function Eyes({ look, mood, ink, gaze }: { look: Look; mood: Mood; ink: string; 
             {look.eyes === "round" ? (
               <>
                 <circle cx={x} cy={y} r="12" fill="#fff" stroke={INK} strokeWidth="3" />
-                <circle cx={x + px} cy={y + py} r="5.5" fill={INK} />
+                <circle cx={x + ox} cy={y + oy} r="5.5" fill={INK} />
+                <circle cx={x + ox + 1.7} cy={y + oy - 2.2} r="1.5" fill="#fff" opacity="0.9" />
               </>
             ) : (
               <>
-                <ellipse cx={x + px} cy={y + py} rx="6" ry="8" fill={ink} />
-                <circle cx={x + px + 2} cy={y + py - 3} r="2" fill="#fff" />
+                <ellipse cx={x + ox} cy={y + oy} rx="6" ry="8" fill={ink} />
+                <circle cx={x + ox + 2} cy={y + oy - 3} r="2" fill="#fff" />
               </>
             )}
             {mood === "oops" && (
@@ -140,7 +150,6 @@ function Eyes({ look, mood, ink, gaze }: { look: Look; mood: Mood; ink: string; 
           </g>
         );
       })}
-      </g>
     </g>
   );
 }
@@ -281,7 +290,7 @@ export default function Mascot({ look, mood = "idle", prop, size = 140, speaking
         const dx = e.clientX - (box.left + box.width / 2);
         const dy = e.clientY - (box.top + box.height * 0.45);
         const dist = Math.hypot(dx, dy) || 1;
-        const reach = Math.min(1, dist / 260) * 4;
+        const reach = Math.min(1, dist / 260) * 6;
         setGaze({ x: (dx / dist) * reach, y: (dy / dist) * reach });
       });
     }
