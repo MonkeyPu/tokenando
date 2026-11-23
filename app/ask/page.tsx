@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { findFaqAnswer } from "@/lib/faq";
-import { say, type Mood } from "@/lib/assistant";
+import { say, stripMarkdown, type Mood } from "@/lib/assistant";
 import Mascot from "@/components/Mascot";
+import TypedText from "@/components/TypedText";
 import { useAssistant } from "@/components/AssistantProvider";
 
 type Msg = { role: "user" | "assistant"; text: string };
@@ -45,7 +46,7 @@ export default function AskPage() {
     setMood("think");
 
     const reply = (t: string, m: Mood = "idle") => {
-      setMsgs([...history, { role: "assistant", text: t }]);
+      setMsgs([...history, { role: "assistant", text: stripMarkdown(t) }]);
       setMood(m);
       setBusy(false);
     };
@@ -95,7 +96,16 @@ export default function AskPage() {
       <div className="chat" aria-live="polite">
         <div className="msg bot">{say(personality.lines.greet, 0, { name, lesson: "how AI works" })}</div>
         {msgs.map((m, i) => (
-          <div key={i} className={`msg ${m.role === "user" ? "me" : "bot"}`}>{m.text}</div>
+          <div key={i} className={`msg ${m.role === "user" ? "me" : "bot"}`}>
+            {m.role === "assistant" ? (
+              <TypedText
+                text={m.text}
+                onProgress={() => endRef.current?.scrollIntoView({ block: "nearest" })}
+              />
+            ) : (
+              m.text
+            )}
+          </div>
         ))}
         {busy && <div className="msg bot dim">{name} is thinking…</div>}
         <div ref={endRef} />

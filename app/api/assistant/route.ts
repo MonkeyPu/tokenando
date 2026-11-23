@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { DEFAULT_SETTINGS, PERSONALITIES, buildSystemPrompt, cleanName } from "@/lib/assistant";
+import { DEFAULT_SETTINGS, PERSONALITIES, buildSystemPrompt, cleanName, stripMarkdown } from "@/lib/assistant";
 import { generateText, provider } from "@/lib/llm";
 
 export const runtime = "nodejs";
@@ -57,7 +57,9 @@ export async function POST(req: Request) {
     custom ? { custom: true, text: (row!.assistant_personality_custom as string).slice(0, 300) } : { custom: false, text: (preset ?? PERSONALITIES[0]).prompt }
   );
 
-  const result = await generateText({ system, messages, maxTokens: 500 });
+  const result = await generateText({ system, messages, maxTokens: 220 });
   if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
-  return NextResponse.json({ reply: result.text });
+  // Models often answer in markdown even when told not to; the chat is plain text.
+  const reply = stripMarkdown(result.text);
+  return NextResponse.json({ reply: reply || result.text.trim() });
 }
