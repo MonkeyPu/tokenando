@@ -4,6 +4,7 @@ import { LOOK_SYSTEM_PROMPT, sanitizeLook } from "@/lib/assistant";
 import { generateText, provider } from "@/lib/llm";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 const hits = new Map<string, number[]>();
 function tooMany(user: string) {

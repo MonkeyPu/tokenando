@@ -4,6 +4,9 @@ import { DEFAULT_SETTINGS, PERSONALITIES, buildSystemPrompt, cleanName } from "@
 import { generateText, provider } from "@/lib/llm";
 
 export const runtime = "nodejs";
+// The model chain may try 3 names (and retry one without thinkingConfig), which
+// can outlast Vercel's 10s default and surface as a bare 504.
+export const maxDuration = 30;
 
 // Light protection against runaway use. This is per server instance, so it's a speed bump, not a wall.
 const hits = new Map<string, number[]>();
