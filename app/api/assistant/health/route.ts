@@ -32,33 +32,41 @@ function shape(value: string | undefined): Shape {
 }
 
 async function testGemini(key: string, model: string) {
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-goog-api-key": key.trim() },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: "ping" }] }],
-          generationConfig: { maxOutputTokens: 1, thinkingConfig: { thinkingBudget: 0 } },
-        }),
-        signal: AbortSignal.timeout(15000),
+  // Mirrors lib/llm.ts: a model that rejects thinkingBudget:0 is retried without
+  // it, otherwise a perfectly healthy lite model would report 400 and read as broken.
+  for (const withThinking of [true, false]) {
+    try {
+      const generationConfig: Record<string, unknown> = { maxOutputTokens: 1 };
+      if (withThinking) generationConfig.thinkingConfig = { thinkingBudget: 0 };
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-goog-api-key": key.trim() },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: "ping" }] }],
+            generationConfig,
+          }),
+          signal: AbortSignal.timeout(15000),
+        }
+      );
+      let reason: string | undefined;
+      let message: string | undefined;
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as {
+          error?: { status?: string; message?: string };
+        } | null;
+        reason = body?.error?.status;
+        // Google echoes request details in errors; make sure a key can never ride along.
+        message = body?.error?.message?.replaceAll(key.trim(), "[redacted]").slice(0, 160);
+        if (withThinking && res.status === 400) continue; // retry without thinkingConfig
       }
-    );
-    let reason: string | undefined;
-    let message: string | undefined;
-    if (!res.ok) {
-      const body = (await res.json().catch(() => null)) as {
-        error?: { status?: string; message?: string };
-      } | null;
-      reason = body?.error?.status;
-      // Google echoes request details in errors; make sure a key can never ride along.
-      message = body?.error?.message?.replaceAll(key.trim(), "[redacted]").slice(0, 160);
+      return { http: res.status, ok: res.ok, reason, message };
+    } catch {
+      return { http: 0, ok: false as const, reason: "network_error" };
     }
-    return { http: res.status, ok: res.ok, reason, message };
-  } catch {
-    return { http: 0, ok: false as const, reason: "network_error" };
   }
+  return { http: 0, ok: false as const, reason: "rejected_thinking_config" };
 }
 
 export async function GET() {

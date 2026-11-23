@@ -11,12 +11,17 @@ export type Msg = { role: "user" | "assistant"; text: string };
 // *-latest alias is tried if the primary 404s; otherwise a retired name means
 // silence forever with no clue why.
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-const GEMINI_FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || "gemini-flash-latest";
+// Comma-separated. gemini-flash-latest turned out to be just an alias for the
+// newest Flash, so it 503s at the same moment as the primary — no spare
+// capacity there. The previous generation and the lite model are what actually
+// answer when the newest one is having a spike.
+const GEMINI_FALLBACK_MODEL =
+  process.env.GEMINI_FALLBACK_MODEL || "gemini-3.6-flash,gemini-flash-lite-latest";
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
 
-export const GEMINI_MODELS = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL].filter(
-  (m, i, all) => Boolean(m) && all.indexOf(m) === i
-);
+export const GEMINI_MODELS: string[] = [GEMINI_MODEL, ...GEMINI_FALLBACK_MODEL.split(",")]
+  .map((m) => m.trim())
+  .filter((m, i, all) => Boolean(m) && all.indexOf(m) === i);
 
 export type Provider = "gemini" | "anthropic" | null;
 
@@ -39,14 +44,15 @@ async function viaGemini(system: string, messages: Msg[], maxTokens: number): Pr
     .filter((m, i) => !(i === 0 && m.role === "assistant"))
     .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.text }] }));
 
-  let res: Response | null = null;
-  for (const model of GEMINI_MODELS) {
+  // One attempt at one model. thinkingBudget:0 stops 3.x Flash spending
+  // hundreds of thinking tokens on a one-line reply (measured: 303 thoughts for
+  // a 5-token answer), but the lite models reject the field outright with
+  // 400 INVALID_ARGUMENT — so it is opt-in per attempt, not per model name.
+  async function attempt(model: string, withThinking: boolean) {
     const generationConfig: Record<string, unknown> = { maxOutputTokens: maxTokens, temperature: 0.9 };
-    // 2.5 Flash thinks before answering unless told not to; that burns free-tier
-    // tokens and latency on what are one-line replies. Pro models refuse 0.
-    if (!/pro/i.test(model)) generationConfig.thinkingConfig = { thinkingBudget: 0 };
+    if (withThinking && !/pro/i.test(model)) generationConfig.thinkingConfig = { thinkingBudget: 0 };
 
-    res = await fetch(
+    const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
       {
         method: "POST",
@@ -60,25 +66,34 @@ async function viaGemini(system: string, messages: Msg[], maxTokens: number): Pr
       }
     );
 
-    // 404 = this model name isn't offered to this key, so try the next one.
-    // 429/400/403 are real answers about the request, so stop there.
-    if (res.status !== 404) break;
+    const raw = (await res.json().catch(() => ({}))) as {
+      candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] } }[];
+      error?: { status?: string; message?: string };
+    };
+    const text = (raw.candidates?.[0]?.content?.parts ?? [])
+      .filter((p) => !p.thought && typeof p.text === "string")
+      .map((p) => p.text)
+      .join("")
+      .trim();
+    return { status: res.status, ok: res.ok, text, error: raw.error };
   }
 
-  if (!res) return { ok: false, error: "upstream", status: 502 };
-  if (res.status === 429) return { ok: false, error: "slow_down", status: 429 };
-  if (!res.ok) return { ok: false, error: "upstream", status: 502 };
+  let lastError: string | undefined;
+  for (const model of GEMINI_MODELS) {
+    let r = await attempt(model, true);
+    if (r.status === 400 && /invalid argument|thinking/i.test(r.error?.message ?? "")) {
+      r = await attempt(model, false); // this model refuses thinkingConfig
+    }
+    if (r.ok && r.text) return { ok: true, text: r.text };
 
-  const data = (await res.json()) as {
-    candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] } }[];
-  };
-  const text = (data.candidates?.[0]?.content?.parts ?? [])
-    .filter((p) => !p.thought && typeof p.text === "string")
-    .map((p) => p.text)
-    .join("")
-    .trim();
-  if (!text) return { ok: false, error: "upstream", status: 502 };
-  return { ok: true, text };
+    lastError = `${model} ${r.status} ${r.error?.status ?? ""} ${r.error?.message ?? ""}`.trim();
+    if (r.status === 429) return { ok: false, error: "slow_down", status: 429 };
+    if (r.status === 401 || r.status === 403) break; // bad key: other names won't help
+    // 404 = retired name for this key, 503 = "high demand" spike, 400/500 = next name.
+  }
+
+  console.warn("[llm] every Gemini model failed:", lastError);
+  return { ok: false, error: "upstream", status: 502 };
 }
 
 async function viaAnthropic(system: string, messages: Msg[], maxTokens: number): Promise<Result> {
