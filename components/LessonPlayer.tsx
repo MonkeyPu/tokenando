@@ -238,7 +238,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
         <p className="lede" style={{ margin: 0 }}>{title}</p>
         <h2>{c.title}</h2>
         {/* One slot only: the previous card's visual is gone before the next one mounts. */}
-        {c.visual && <LessonVisual id={c.visual} instant={seen.has(step)} />}
+        {c.visual && <LessonVisual id={c.visual} look={look} instant={seen.has(step)} />}
         <div className="lesson-text" key={step}>
           {c.text.split("\n\n").map((para, i) => <p key={i}>{para}</p>)}
         </div>

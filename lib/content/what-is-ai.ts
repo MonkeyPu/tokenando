@@ -16,8 +16,8 @@ export const lessons: Lesson[] = [
   {
     title: "Predicting, not thinking",
     cards: [
-      card("A pattern engine", "Large language models (LLMs) like ChatGPT and Claude don't have opinions, feelings, or a stored list of facts. They are advanced statistical calculators.\n\nGiven your text, an LLM predicts the most likely next chunk of text, then the next, then the next, until it has a full answer."),
-      card("Smart autocomplete", "Humans build mental models of the world: gravity, fairness, emotions. An LLM instead reads patterns in a huge amount of text.\n\nThink of your phone's autocomplete, but trained on a giant slice of the internet, books and code. That's why it can sound human without understanding things the way you do."),
+      card("A pattern engine", "Large language models (LLMs) like ChatGPT and Claude don't have opinions, feelings, or a stored list of facts. They are advanced statistical calculators.\n\nGiven your text, an LLM predicts the most likely next chunk of text, then the next, then the next, until it has a full answer.", "next-token"),
+      card("Smart autocomplete", "Humans build mental models of the world: gravity, fairness, emotions. An LLM instead reads patterns in a huge amount of text.\n\nThink of your phone's autocomplete, but trained on a giant slice of the internet, books and code. That's why it can sound human without understanding things the way you do.", "smart-autocomplete"),
     ],
     questions: [
       q("What does an LLM do at its core?", ["Looks up answers in a database of facts", "Forms its own opinion about your question", "Predicts the next likely piece of text", "Searches the web every time"], 2, "Everything an LLM writes comes from repeated next-piece predictions."),
@@ -28,8 +28,8 @@ export const lessons: Lesson[] = [
   {
     title: "How AI learns",
     cards: [
-      card("Training means finding patterns", "Before you ever type a word, a model is trained on a massive pile of text: websites, books, articles and code.\n\nIt isn't memorising a library. It's learning which words tend to follow which other words, in which situations, across billions of examples."),
-      card("After training", "When you ask a question, the model can't flip back through its training text. It uses the patterns it learned to generate a response one token at a time.\n\nMany chatbots also get extra training from people, who rate answers so the AI becomes more helpful and polite."),
+      card("Training means finding patterns", "Before you ever type a word, a model is trained on a massive pile of text: websites, books, articles and code.\n\nIt isn't memorising a library. It's learning which words tend to follow which other words, in which situations, across billions of examples.", "training-pile"),
+      card("After training", "When you ask a question, the model can't flip back through its training text. It uses the patterns it learned to generate a response one token at a time.\n\nMany chatbots also get extra training from people, who rate answers so the AI becomes more helpful and polite.", "after-training"),
     ],
     questions: [
       q("What is a model mainly learning during training?", ["Exact pages to copy", "A list of correct answers", "Statistical patterns about language", "Your personal details"], 2, "It learns which words and ideas tend to go together."),
@@ -40,8 +40,8 @@ export const lessons: Lesson[] = [
   {
     title: "Why AI gets things wrong",
     cards: [
-      card("Four ways AI goes wrong", "False information in the training data can be learned as if it were true.\n\nConflicting sources: different websites make different claims.\n\nOut-of-date knowledge: the model repeats old facts.\n\nHallucinations: when it doesn't actually know, it can still produce a plausible-sounding but wrong answer."),
-      card("Plausible is not the same as true", "A hallucination isn't a database lookup that went wrong. The model generated text that fits the patterns it learned.\n\nAnd since AI always sounds confident, a made-up fact looks exactly like a real one. Always check anything important."),
+      card("Four ways AI goes wrong", "False information in the training data can be learned as if it were true.\n\nConflicting sources: different websites make different claims.\n\nOut-of-date knowledge: the model repeats old facts.\n\nHallucinations: when it doesn't actually know, it can still produce a plausible-sounding but wrong answer.", "failure-modes"),
+      card("Plausible is not the same as true", "A hallucination isn't a database lookup that went wrong. The model generated text that fits the patterns it learned.\n\nAnd since AI always sounds confident, a made-up fact looks exactly like a real one. Always check anything important.", "hallucination"),
     ],
     questions: [
       q("Which is an example of a hallucination?", ["A chatbot refuses to answer", "A chatbot answers slowly", "A chatbot invents a book that doesn't exist, with a convincing title and author", "A chatbot repeats your question"], 2, "It sounds real, but it was generated, not found."),
