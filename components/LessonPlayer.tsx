@@ -42,6 +42,8 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
   const [best, setBest] = useState(0);
   const [burst, setBurst] = useState<string | null>(null);
   const [hints, setHints] = useState<boolean[]>(() => questions.map(() => false));
+  // Steps whose visual has already played once, so revisiting shows the finished picture.
+  const [seen, setSeen] = useState<ReadonlySet<number>>(() => new Set<number>());
 
   const finished = step >= total;
   const onCard = step < cards.length;
@@ -65,6 +67,17 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
     return questions.map((question, i) => (c[i] ? (p[i] === question.answer ? "correct" : "wrong") : "skipped"));
   }
 
+  // Remember a card's visual as seen the moment we leave that card.
+  function markSeen() {
+    if (!onCard || !cards[step]?.visual) return;
+    setSeen((old) => {
+      if (old.has(step)) return old;
+      const copy = new Set(old);
+      copy.add(step);
+      return copy;
+    });
+  }
+
   async function finish(all: Result[]) {
     setSaved("saving");
     const status = all.every((r) => r === "skipped") ? "skipped" : "done";
@@ -80,6 +93,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
 
   function back() {
     setJustSkipped(false);
+    markSeen();
     setStep(Math.max(0, step - 1));
   }
 
@@ -113,6 +127,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
 
   function next() {
     setJustSkipped(false);
+    markSeen();
     go();
   }
 
@@ -185,7 +200,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
     const right = results.filter((r) => r === "correct").length;
     const skippedCount = results.filter((r) => r === "skipped").length;
     return (
-      <div className="player">
+      <div className="player" key="results">
         {bar}
         {stage("celebrate", say(lines.finish, n, { ...vars, score: `${right} of ${questions.length} right` }))}
         <h2>Lesson finished</h2>
@@ -217,12 +232,13 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
     const mood: Mood = c.scene?.mood ?? (first ? "wave" : last ? "idle" : "point");
     const prop: Prop = c.scene?.prop ?? (first ? "book" : last ? "lightbulb" : "none");
     return (
-      <div className="player">
+      <div className="player" key={`card-${step}`}>
         {bar}
         {stage(mood, say(first ? lines.greet : lines.card, n, vars), prop)}
         <p className="lede" style={{ margin: 0 }}>{title}</p>
         <h2>{c.title}</h2>
-        {c.visual && <LessonVisual key={step} id={c.visual} />}
+        {/* One slot only: the previous card's visual is gone before the next one mounts. */}
+        {c.visual && <LessonVisual id={c.visual} instant={seen.has(step)} />}
         <div className="lesson-text" key={step}>
           {c.text.split("\n\n").map((para, i) => <p key={i}>{para}</p>)}
         </div>
@@ -251,7 +267,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
   }
 
   return (
-    <div className="player">
+    <div className="player" key={`q-${qi}`}>
       {bar}
       {stage(mood, text)}
       <p className="lede" style={{ margin: 0 }}>{title}</p>

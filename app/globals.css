@@ -188,6 +188,10 @@ a.btn { display: inline-block; text-align: center; }
   .lv-in, .lv-pop, .lv-stamp-in, .lv-rail::after, .lv-snow i { animation: none !important; }
 }
 
+/* A visual the learner has already seen renders in its finished state, no replay. */
+.lv-instant .lv-in, .lv-instant .lv-pop, .lv-instant .lv-stamp-in,
+.lv-instant .lv-rail::after, .lv-instant .lv-snow i { animation: none !important; }
+
 /* Forms, panels and option cards */
 .field textarea { font: inherit; padding: 0.8rem 1rem; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--fg); resize: vertical; }
 .field textarea:focus { border-color: var(--green); outline: none; }
@@ -277,6 +281,15 @@ a.btn { display: inline-block; text-align: center; }
 
 /* ---------- Lesson teaching visuals ---------- */
 .lv-wrap { margin: 1.2rem 0 1.5rem; }
+/* Revisiting a card: skip the replay and show the finished picture.
+   Every scene animation fills "both", so parking them at t=99s holds the end
+   state (the infinite snow just freezes mid-fall, which still reads correctly). */
+.lv-wrap.lv-instant *,
+.lv-wrap.lv-instant *::before,
+.lv-wrap.lv-instant *::after {
+  animation-delay: -99s !important;
+  animation-play-state: paused !important;
+}
 .lv {
   position: relative;
   border: 2px solid var(--line);

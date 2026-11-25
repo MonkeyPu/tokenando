@@ -8,12 +8,12 @@ export const VISUALS: Record<string, ComponentType> = {
   "history-timeline": HistoryTimeline,
 };
 
-export default function LessonVisual({ id }: { id: string }) {
+export default function LessonVisual({ id, instant = false }: { id: string; instant?: boolean }) {
   const Scene = VISUALS[id];
   if (!Scene) return null;
   return (
-    <figure className="lv-wrap" aria-hidden="true">
-      <Scene />
+    <figure className={instant ? "lv-wrap lv-instant" : "lv-wrap"} aria-hidden="true">
+      <Scene key={id} />
     </figure>
   );
 }
