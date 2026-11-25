@@ -1,7 +1,8 @@
 import type { Mood, Prop } from "./assistant";
 
 // `scene` is optional. Without it the mascot picks a mood for the card automatically.
-export type Card = { title: string; text: string; scene?: { mood?: Mood; prop?: Prop } };
+// `visual` names an animated teaching scene (see components/lesson-visuals).
+export type Card = { title: string; text: string; visual?: string; scene?: { mood?: Mood; prop?: Prop } };
 
 export type Question = {
   prompt: string;
@@ -23,5 +24,5 @@ export type Course = {
 
 // Short helpers so the content files stay readable.
 // Separate paragraphs inside a card with a blank line (\n\n).
-export const card = (title: string, text: string): Card => ({ title, text });
+export const card = (title: string, text: string, visual?: string): Card => ({ title, text, visual });
 export const q = (prompt: string, options: string[], answer: number, explanation: string): Question => ({ prompt, options, answer, explanation });

@@ -4,8 +4,8 @@ export const lessons: Lesson[] = [
   {
     title: "A short history of AI",
     cards: [
-      card("Can machines think?", "In 1950, the mathematician Alan Turing asked a simple question: if you chat with something by text and can't tell whether it's a human, should we call it intelligent? That idea became the famous Turing Test.\n\nIn 1955, researcher John McCarthy gave the whole field its name: Artificial Intelligence."),
-      card("Winters and wins", "Early hopes were huge, but computers were too slow and had too little memory. When AI couldn't keep its big promises, funding dried up. These dry spells (roughly 1974 to 1993) are called AI Winters.\n\nThen things took off. In 1997, IBM's Deep Blue beat chess champion Garry Kasparov. In 2012, a neural network trained on millions of YouTube images learned to spot cats on its own, which set off the deep learning boom. In 2022, ChatGPT launched and generative AI went mainstream."),
+      card("Can machines think?", "In 1950, the mathematician Alan Turing asked a simple question: if you chat with something by text and can't tell whether it's a human, should we call it intelligent? That idea became the famous Turing Test.\n\nIn 1955, researcher John McCarthy gave the whole field its name: Artificial Intelligence.", "turing-test"),
+      card("Winters and wins", "Early hopes were huge, but computers were too slow and had too little memory. When AI couldn't keep its big promises, funding dried up. Those dry spells are called AI Winters.\n\nThen each win restarted the clock. In 1997 a computer beat the world chess champion. In 2012 a network taught itself to spot cats in millions of videos. In 2022 ChatGPT put generative AI in everyone's browser.", "history-timeline"),
     ],
     questions: [
       q("What did Alan Turing suggest in 1950?", ["Computers will never be able to play games", "Machines need feelings to count as intelligent", "If you can't tell a computer from a human in a text chat, it counts as intelligent", "AI should only be used in chess"], 2, "That's the Turing Test: judge by the conversation, not by what's inside the machine."),

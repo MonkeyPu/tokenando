@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Confetti from "./Confetti";
 import SpeechBubble from "./SpeechBubble";
 import type { Card, Question } from "@/lib/types";
+import LessonVisual from "@/components/lesson-visuals";
 import { saveLesson } from "@/lib/progress";
 import { say, clip, quoted, type Mood, type Prop, type SayVars } from "@/lib/assistant";
 import Mascot from "./Mascot";
@@ -221,6 +222,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
         {stage(mood, say(first ? lines.greet : lines.card, n, vars), prop)}
         <p className="lede" style={{ margin: 0 }}>{title}</p>
         <h2>{c.title}</h2>
+        {c.visual && <LessonVisual key={step} id={c.visual} />}
         <div className="lesson-text" key={step}>
           {c.text.split("\n\n").map((para, i) => <p key={i}>{para}</p>)}
         </div>

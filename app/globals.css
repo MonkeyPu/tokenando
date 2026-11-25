@@ -184,6 +184,8 @@ a.btn { display: inline-block; text-align: center; }
   .mascot-pop, .mascot-pop *, .confetti span { animation: none !important; }
   .bubble, .caret, .combo, .feedback, .lesson-text, .options .option, .node, .node-guide, .dot.next { animation: none !important; }
   .confetti { display: none; }
+  /* Teaching diagrams stay fully readable, just unanimated. */
+  .lv-in, .lv-pop, .lv-stamp-in, .lv-rail::after, .lv-snow i { animation: none !important; }
 }
 
 /* Forms, panels and option cards */
@@ -272,3 +274,95 @@ a.btn { display: inline-block; text-align: center; }
 @media (max-width: 800px) {
   .node-guide { right: 0; }
 }
+
+/* ---------- Lesson teaching visuals ---------- */
+.lv-wrap { margin: 1.2rem 0 1.5rem; }
+.lv {
+  position: relative;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 1.1rem;
+}
+.lv-in { animation: lv-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.lv-pop { animation: lv-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.5) both; }
+.lv-stamp-in { animation: lv-stamp 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+
+@keyframes lv-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes lv-pop { from { opacity: 0; transform: scale(0.72); } to { opacity: 1; transform: none; } }
+@keyframes lv-stamp {
+  0% { opacity: 0; transform: rotate(-7deg) scale(1.35); }
+  60% { opacity: 1; transform: rotate(-2deg) scale(0.97); }
+  100% { opacity: 1; transform: rotate(-2deg) scale(1); }
+}
+@keyframes lv-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes lv-flake {
+  0% { transform: translateY(-8px); opacity: 0; }
+  25% { opacity: 0.55; }
+  100% { transform: translateY(18px); opacity: 0; }
+}
+
+/* Turing Test: same question, two identical-looking answers */
+.lv-turing { display: flex; flex-wrap: wrap; gap: 1rem; align-items: stretch; }
+.lv-chat { flex: 1 1 280px; display: flex; flex-direction: column; gap: 0.6rem; justify-content: center; }
+.lv-you, .lv-lane { display: flex; align-items: center; gap: 0.5rem; }
+.lv-you { justify-content: flex-end; }
+.lv-lanes { display: flex; flex-direction: column; gap: 0.5rem; }
+.lv-you p, .lv-lane p {
+  margin: 0; font-size: 0.9rem; padding: 0.5rem 0.75rem;
+  border-radius: 14px; border: 2px solid var(--line); background: var(--bg);
+}
+.lv-you p { background: var(--green); border-color: var(--green); color: var(--on-green); font-weight: 700; }
+.lv-tag, .lv-avatar {
+  flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%;
+  display: grid; place-items: center; border: 2px solid var(--line);
+  font: 700 0.78rem var(--font-display), system-ui, sans-serif;
+}
+.lv-stamp {
+  flex: 0 1 180px; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.25rem; text-align: center;
+  border: 2px dashed var(--green); border-radius: 14px; padding: 0.9rem 0.7rem;
+}
+.lv-stamp b { font: 700 2rem/1 var(--font-display), system-ui, sans-serif; color: var(--green); }
+.lv-stamp span { font-size: 0.82rem; font-weight: 600; }
+.lv-stamp em { font-size: 0.72rem; font-style: normal; color: var(--muted); }
+
+/* Timeline: the rail draws itself, milestones land in year order */
+.lv-timeline { padding: 1.2rem 1rem 1.1rem; overflow: hidden; }
+.lv-rail {
+  position: absolute; left: 2.6rem; right: 2.6rem; top: 2.3rem; height: 3px;
+  background: var(--line); border-radius: 3px;
+}
+.lv-rail::after {
+  content: ""; position: absolute; inset: 0; border-radius: 3px;
+  background: var(--green); transform-origin: left;
+  animation: lv-grow 1.5s ease-out 0.15s both;
+}
+.lv-events {
+  list-style: none; margin: 0; padding: 0; position: relative;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.5rem;
+}
+.lv-ev { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; text-align: center; }
+.lv-dot {
+  position: relative; z-index: 1; width: 2rem; height: 2rem; border-radius: 50%;
+  display: grid; place-items: center; background: var(--bg);
+  border: 2px solid var(--green); font-size: 0.95rem; line-height: 1;
+}
+.lv-ev.winter .lv-dot { border-color: var(--line); border-style: dashed; filter: grayscale(1); }
+.lv-ev b { font: 700 0.85rem var(--font-display), system-ui, sans-serif; }
+.lv-ev .lv-lbl { font-size: 0.72rem; line-height: 1.25; color: var(--muted); }
+.lv-ev.winter .lv-lbl { font-style: italic; }
+.lv-snow { position: absolute; inset: -8px 0; pointer-events: none; }
+.lv-snow i {
+  position: absolute; top: 0; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--fg); opacity: 0.4; animation: lv-flake 2.8s linear infinite;
+}
+.lv-snow i:nth-child(1) { left: 22%; }
+.lv-snow i:nth-child(2) { left: 50%; animation-delay: 1s; }
+.lv-snow i:nth-child(3) { left: 76%; animation-delay: 1.9s; }
+
+@media (max-width: 620px) {
+  .lv-events { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 0.5rem; }
+  .lv-rail { display: none; }
+}
+
