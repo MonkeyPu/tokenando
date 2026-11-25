@@ -1,4 +1,6 @@
 import { supabase } from "./supabase";
+import { clearStreak } from "./streak";
+
 
 export type Status = "done" | "skipped";
 
@@ -54,6 +56,9 @@ export async function resetProgress(): Promise<boolean> {
 
   // Streak is a separate column on profiles; a failure there shouldn't undo the reset above.
   await supabase.from("profiles").update({ streak_count: 0, last_active: null }).eq("id", user.id);
+
+  // The answer streak lives in the browser, so a progress reset has to clear it too.
+  clearStreak();
   return true;
 }
 

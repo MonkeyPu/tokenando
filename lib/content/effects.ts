@@ -11,7 +11,7 @@ export const lessons: Lesson[] = [
     questions: [
       q("What share of jobs are expected to be reshaped within a few years?", ["About 5%", "About 95%", "50% to 55%"], 2, "Most jobs will change, but few will vanish entirely."),
       q("Which jobs are most exposed to automation?", ["Entry-level jobs with routine tasks", "Senior roles requiring judgement", "Every job equally", "Jobs that need empathy"], 0, "Routine tasks are what AI handles best."),
-      q("What does 'task automation is not job loss' mean?", ["AI never changes work", "Automating tasks can free up time for the parts of the job that need people", "Nobody will lose a job", "Tasks can't be automated"], 1, "A teacher with less paperwork still teaches."),
+      q("What does 'task automation is not job loss' mean?", ["AI leaves every job exactly as it is today, no changes", "Automating tasks can free time for the human parts of a job", "Nobody anywhere will lose a job because of AI", "Tasks get automated, but the work around them stays the same"], 1, "A teacher with less paperwork still teaches."),
     ],
   },
   {
@@ -23,8 +23,8 @@ export const lessons: Lesson[] = [
     ],
     questions: [
       q("Why do so many applications sound alike?", ["Everyone uses the same AI tools", "Applicants copy each other's names", "Companies write them", "Resumes must be identical"], 0, "Same tools, same patterns, same sound."),
-      q("What is 'tinderized' hiring?", ["Dating at work", "Applying to hundreds of jobs with one click", "Hiring on social media", "Interviewing by text"], 1, "Mass-applying has become effortless, so employers get flooded."),
-      q("Which approach is the most likely to stand out?", ["Blasting 300 identical applications", "Polishing your resume with the same AI as everyone", "A tailored message to a real person with a clear point of view"], 2, "Quality and humanity signal effort that volume can't fake."),
+      q("What is 'tinderized' hiring?", ["Hiring someone you matched with on an app", "Applying to hundreds of jobs with one click", "Hiring new staff through social media posts", "Doing job interviews entirely over text"], 1, "Mass-applying has become effortless, so employers get flooded."),
+      q("Which approach is the most likely to stand out?", ["Blasting 300 identical applications to every single listing", "Polishing your resume with the same AI as everybody else", "A tailored message to a real person with a clear point of view"], 2, "Quality and humanity signal effort that volume can't fake."),
     ],
   },
   {
@@ -35,9 +35,9 @@ export const lessons: Lesson[] = [
       card("Structured questioning", "Prompting is the art of framing a problem: setting constraints, giving context and asking precise follow-ups. A lazy question gets a lazy answer.\n\nIn a world where AI knows a lot, the quality of your questions is a superpower."),
     ],
     questions: [
-      q("What does 'synthesis over production' mean?", ["Produce as much text as possible", "Judge many sources and pull out the core truth", "Avoid using AI", "Memorise facts"], 1, "Making content is cheap now. Making sense of it is valuable."),
+      q("What does 'synthesis over production' mean?", ["Produce as much text as you can, as quickly as you can", "Judge many sources and pull out the core truth", "Avoid using AI, and read the sources yourself", "Memorise the key facts so you can repeat them"], 1, "Making content is cheap now. Making sense of it is valuable."),
       q("Why is empathy hard for AI?", ["It has no lived experience", "It can't read", "It's too slow", "It only works in English"], 0, "It's read about feelings, but never felt them."),
-      q("What makes a prompt powerful?", ["Being as short as possible", "Clear framing: context, constraints and precise follow-ups", "Using fancy words", "Typing quickly"], 1, "Good questions come from clear thinking."),
+      q("What makes a prompt powerful?", ["Keeping it as short as possible, so nothing gets confused", "Clear framing: context, constraints and precise follow-ups", "Using technical words and long, detailed sentences", "Typing fast and asking several questions in one go"], 1, "Good questions come from clear thinking."),
     ],
   },
   {
@@ -49,8 +49,8 @@ export const lessons: Lesson[] = [
     ],
     questions: [
       q("Where is your message processed?", ["On your phone", "In a data center", "In your Wi-Fi router", "Inside your browser"], 1, "The model is far too big to run on a phone."),
-      q("Why do AI data centers rely on GPUs?", ["They run thousands of calculations in parallel", "They're cheap", "They store photos", "They make chats private"], 0, "Parallel maths is exactly what token processing needs."),
-      q("Why do data centers need so much cooling?", ["Thousands of chips running at once produce a lot of heat", "Because it's always summer", "To keep chats fresh", "For decoration"], 0, "Heat has to go somewhere, and cooling uses water and power."),
+      q("Why do AI data centers rely on GPUs?", ["They run thousands of calculations in parallel", "They are much cheaper than ordinary processors", "They store the training photos in a compact format", "They keep each chat private from the other users"], 0, "Parallel maths is exactly what token processing needs."),
+      q("Why do data centers need so much cooling?", ["Thousands of chips running at once produce a lot of heat", "The buildings are in hot countries, so summers are long", "Cool air keeps the stored chats fresh and readable", "The fans make the servers run faster and quieter"], 0, "Heat has to go somewhere, and cooling uses water and power."),
     ],
   },
   {
@@ -61,9 +61,9 @@ export const lessons: Lesson[] = [
       card("The catch", "Without evaporation, you need big fans and chillers, which use more electricity. Google, Amazon and Meta are switching to similar designs, but hundreds of older data centers still use high-water cooling.\n\nSo 'somewhat' is the honest answer: true for the new design, not for the whole industry. Always ask what a claim covers."),
     ],
     questions: [
-      q("What is closed-loop liquid cooling?", ["Water is sealed in pipes and recirculated", "Water is poured on the chips", "Chips are cooled with ice cubes", "A fan blows over the building"], 0, "Like a car radiator, it reuses the same water."),
-      q("What is the 'water vs electricity' dilemma?", ["Saving water can mean using more electricity for fans and chillers", "Water and electricity are the same", "Cooling is free", "Chips don't need either"], 0, "Cooling without evaporation takes more power."),
-      q("Why is the restaurant claim only 'somewhat' true?", ["It's completely false", "It applies to the newest design, not to every data center", "Restaurants use no water", "Nobody checked it"], 1, "Many older data centers still use traditional, thirstier cooling."),
+      q("What is closed-loop liquid cooling?", ["Water is sealed in pipes and recirculated", "Water is poured over the chips and left to dry", "Chips are packed in ice cubes inside the rack", "A single fan blows cool air over the building"], 0, "Like a car radiator, it reuses the same water."),
+      q("What is the 'water vs electricity' dilemma?", ["Saving water can mean using more electricity for fans and chillers", "Saving electricity always means saving a matching amount of water too", "Cooling a data center costs nothing but a little water", "Chips need water, but they never need electricity"], 0, "Cooling without evaporation takes more power."),
+      q("Why is the restaurant claim only 'somewhat' true?", ["It's completely false, data centers use no water at all", "It applies to the newest design, not to every data center", "It's true, but restaurants use far more water than that", "It's out of date, nobody has checked those numbers"], 1, "Many older data centers still use traditional, thirstier cooling."),
     ],
   },
 ];

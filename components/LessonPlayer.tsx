@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Confetti from "./Confetti";
 import SpeechBubble from "./SpeechBubble";
 import type { Card, Question } from "@/lib/types";
 import LessonVisual from "@/components/lesson-visuals";
 import { saveLesson } from "@/lib/progress";
+import { loadStreak, saveStreak } from "@/lib/streak";
 import { say, clip, quoted, type Mood, type Prop, type SayVars } from "@/lib/assistant";
 import Mascot from "./Mascot";
 import { useAssistant } from "./AssistantProvider";
@@ -137,6 +138,20 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
     setHints(h);
   }
 
+  // The streak is kept outside the lesson, so it carries on across lessons and
+  // reloads instead of topping out at however many questions one lesson has.
+  const streakLoaded = useRef(false);
+  useEffect(() => {
+    if (!streakLoaded.current) {
+      streakLoaded.current = true;
+      const s = loadStreak();
+      setCombo(s.combo);
+      setBest(s.best);
+      return;
+    }
+    saveStreak({ combo, best });
+  }, [combo, best]);
+
   // Keyboard play: 1-4 to answer, Enter to check or move on.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -206,7 +221,7 @@ export default function LessonPlayer({ slug, lessonIndex, title, cards, question
         <h2>Lesson finished</h2>
         <p className="lede">
           You got {right} of {questions.length} right.
-          {best >= 2 && ` Best streak: ${best} in a row.`}
+          {best >= 2 && ` Best streak so far: ${best} in a row, across every lesson.`}
           {skippedCount > 0 && ` You skipped ${skippedCount}, and that's fine.`}
         </p>
         {saved === "saving" && <p className="notice">Saving your progress…</p>}

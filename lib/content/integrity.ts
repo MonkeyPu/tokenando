@@ -9,8 +9,8 @@ export const lessons: Lesson[] = [
     ],
     questions: [
       q("Which use sits in the 'Safe base' level?", ["Co-writing paragraphs with AI", "Brainstorming a high-level outline", "Pasting AI text as your answer", "Asking AI to rewrite your whole essay"], 1, "Outlines and comprehension checks keep the real work yours."),
-      q("Why is copying AI output wholesale 'out of bounds'?", ["It's slower", "It uses too many tokens", "It skips the learning your brain needs to do", "AI doesn't allow it"], 2, "The point of school work is what it builds in you."),
-      q("A good self-test before submitting is...", ["Could I explain every line out loud?", "Does it sound fancy?", "Is it long enough?", "Did a friend like it?"], 0, "If you can't explain it, it isn't really yours yet."),
+      q("Why is copying AI output wholesale 'out of bounds'?", ["It takes longer than writing the answer yourself", "It uses more tokens than your plan allows for", "It skips the learning your brain needs to do", "The AI's terms do not allow you to copy it"], 2, "The point of school work is what it builds in you."),
+      q("A good self-test before submitting is...", ["Could I explain every line out loud?", "Does it sound fancy and advanced?", "Is it long enough to fill the limit?", "Did a friend read it and like it?"], 0, "If you can't explain it, it isn't really yours yet."),
     ],
   },
   {
@@ -21,9 +21,9 @@ export const lessons: Lesson[] = [
       card("Detectors can be wrong", "Because they only guess, detectors can flag real human writing and miss edited AI text. Some studies have found they flag work by non-native English writers more often. A detector score on its own is not proof of anything."),
     ],
     questions: [
-      q("What do AI detectors actually do?", ["Look text up in a database of AI writing", "Read it for meaning", "Ask the AI who wrote it", "Estimate the probability that a machine wrote it"], 3, "It's a statistical guess."),
+      q("What do AI detectors actually do?", ["Look the text up in a database of AI writing", "Read it closely and judge what it means", "Ask the AI directly whether it wrote the text", "Estimate the probability that a machine wrote it"], 3, "It's a statistical guess."),
       q("Which word choice has HIGHER perplexity?", ["'...cereal.'", "'...jelly beans.'"], 1, "Surprising choices are harder to predict."),
-      q("Why isn't a detector score proof?", ["Detectors only guess and can be wrong", "Detectors are always right", "Detectors only work on poems", "Detectors read your mind"], 0, "False flags happen, so a score alone shouldn't decide anything."),
+      q("Why isn't a detector score proof?", ["Detectors only guess, and they can be wrong", "Detectors are always right, so a score is proof", "Detectors only work on poems and short stories", "Detectors read the writer's mind as they type"], 0, "False flags happen, so a score alone shouldn't decide anything."),
     ],
   },
   {
@@ -34,8 +34,8 @@ export const lessons: Lesson[] = [
       card("Favourite AI words", "Models overuse words that are statistically common in polished writing: 'delve', 'tapestry', 'underscores', 'transformative'.\n\nUsing one doesn't prove AI wrote something, but if you notice stock phrases creeping in, rewrite them in your own voice."),
     ],
     questions: [
-      q("Which excerpt has more burstiness?", ["Excerpt 1, with similar sentence lengths", "Excerpt 2, with short and long sentences mixed"], 1, "The one-word 'Funny.' next to a long sentence gives it a human rhythm."),
-      q("Does using the word 'delve' prove AI wrote a text?", ["Yes, always", "No, it's just a word AI overuses"], 1, "It's a hint at most, never proof."),
+      q("Which excerpt has more burstiness?", ["Excerpt 1, with similar sentence lengths all the way through", "Excerpt 2, with short and long sentences mixed"], 1, "The one-word 'Funny.' next to a long sentence gives it a human rhythm."),
+      q("Does using the word 'delve' prove AI wrote a text?", ["Yes, that word is always a sign of AI", "No, it's just a word AI happens to overuse"], 1, "It's a hint at most, never proof."),
       q("AI writing often sounds like...", ["A drum solo", "A steady metronome", "A jazz improvisation", "A thunderstorm"], 1, "The rhythm is even and flat."),
     ],
   },
@@ -46,7 +46,7 @@ export const lessons: Lesson[] = [
       card("Sound like you", "Read your work out loud. Add details only you would know: a specific moment, a real opinion, an example from your life. Vary your rhythm.\n\nMixed sentence lengths and surprising choices are what make writing yours."),
     ],
     questions: [
-      q("If your work is wrongly flagged, what helps most?", ["Arguing loudly", "Version history, notes and drafts", "Deleting the file", "Running a second detector"], 1, "Evidence of your process is hard to argue with."),
+      q("If your work is wrongly flagged, what helps most?", ["Arguing loudly that you would never do that", "Version history, notes and drafts", "Deleting the file so nobody can check it", "Running a second detector on the same text"], 1, "Evidence of your process is hard to argue with."),
       q("Which adds a human voice to your writing?", ["Longer vocabulary", "A specific personal example", "Repeating the question", "More AI editing"], 1, "Only you have your experiences."),
       q("True or false: a detector score alone proves AI was used.", ["True", "False"], 1, "Detectors guess. They can be wrong."),
     ],

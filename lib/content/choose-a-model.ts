@@ -11,7 +11,7 @@ export const lessons: Lesson[] = [
     questions: [
       q("Which tier suits a simple, high-volume job?", ["Frontier", "Production", "Fast and quick"], 2, "Fast, cheap models are ideal when the task is simple."),
       q("What's the main downside of a frontier model?", ["It's very slow and expensive", "It can't write code", "It has a tiny context window", "It only speaks English"], 0, "Great for hard problems, overkill for easy ones."),
-      q("Why remember tiers, not version numbers?", ["Version numbers are secret", "New versions appear every few months", "Tiers never change", "Versions are always identical"], 1, "The names churn, but the trade-offs between tiers stay."),
+      q("Why remember tiers, not version numbers?", ["Version numbers are secret", "New versions appear every few months", "Tiers never change", "Versions are always identical in every way"], 1, "The names churn, but the trade-offs between tiers stay."),
     ],
   },
   {
@@ -21,7 +21,7 @@ export const lessons: Lesson[] = [
       card("Bigger isn't always better", "Using the biggest model for a quick job wastes time and money, a bit like hiring a rocket scientist to change a lightbulb.\n\nThe question isn't 'which tier is best?' It's 'which tier fits this job?'"),
     ],
     questions: [
-      q("You need to debug a tricky program. Which fits best?", ["The cheapest fast model", "A thinking or frontier-tier model", "No AI at all"], 1, "Hard reasoning benefits from a model that thinks longer."),
+      q("You need to debug a tricky program. Which fits best?", ["The cheapest fast model, then fix the rest by hand", "A thinking or frontier-tier model", "No AI at all, it will only get in the way"], 1, "Hard reasoning benefits from a model that thinks longer."),
       q("You want to fix the grammar in a short email. Which fits best?", ["A frontier model", "A fast model", "A model with the largest context window"], 1, "Speed and low cost matter more than deep reasoning here."),
       q("You want a strong all-rounder for essays and chatting. Which fits best?", ["An everyday or flagship model", "The smallest model you can find", "A raw base model"], 0, "That's the sweet spot of power, speed and natural conversation."),
     ],
@@ -35,8 +35,8 @@ export const lessons: Lesson[] = [
     ],
     questions: [
       q("Which of these is an open model family?", ["GPT", "Llama", "None of them"], 1, "Meta's Llama is published for anyone to download."),
-      q("What is Hugging Face?", ["A messaging app", "A website where open models and datasets are shared", "A kind of GPU", "A chatbot"], 1, "Think of it as a giant library of open AI models."),
-      q("A benefit of an open model is...", ["It's always the smartest", "It needs no hardware", "You can run it yourself and keep data private", "It's always faster"], 2, "That control is the main reason people choose open models."),
+      q("What is Hugging Face?", ["A chat app for talking to several models at once", "A website where open models and datasets are shared", "A kind of GPU built for training big models", "A chatbot that answers questions about open models"], 1, "Think of it as a giant library of open AI models."),
+      q("A benefit of an open model is...", ["It is always the smartest model available", "It needs no hardware to run on at all", "You can run it yourself and keep data private", "It always answers faster than closed models"], 2, "That control is the main reason people choose open models."),
     ],
   },
   {
@@ -49,7 +49,7 @@ export const lessons: Lesson[] = [
     questions: [
       q("What do many AI services charge by?", ["The hour", "Tokens", "Letters typed", "Your internet speed"], 1, "Every token in and out adds to the bill."),
       q("Which saves money on a simple task?", ["Using a smaller model", "Using the biggest model", "Writing a much longer prompt"], 0, "Smaller models cost less per token."),
-      q("Why are reasoning models slower?", ["They spend extra tokens thinking before answering", "They have smaller context windows", "They run on phones", "They are old"], 0, "Reasoning takes extra steps, and extra tokens."),
+      q("Why are reasoning models slower?", ["They spend extra tokens thinking before answering", "They have much smaller context windows to read", "They usually run on phones instead of servers", "They are older models that were never optimised"], 0, "Reasoning takes extra steps, and extra tokens."),
     ],
   },
 ];

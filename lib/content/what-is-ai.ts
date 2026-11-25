@@ -8,8 +8,8 @@ export const lessons: Lesson[] = [
       card("Winters and wins", "Early hopes were huge, but computers were too slow and had too little memory. When AI couldn't keep its big promises, funding dried up. Those dry spells are called AI Winters.\n\nThen each win restarted the clock. In 1997 a computer beat the world chess champion. In 2012 a network taught itself to spot cats in millions of videos. In 2022 ChatGPT put generative AI in everyone's browser.", "history-timeline"),
     ],
     questions: [
-      q("What did Alan Turing suggest in 1950?", ["Computers will never be able to play games", "Machines need feelings to count as intelligent", "If you can't tell a computer from a human in a text chat, it counts as intelligent", "AI should only be used in chess"], 2, "That's the Turing Test: judge by the conversation, not by what's inside the machine."),
-      q("What was an 'AI winter'?", ["A period when AI chips needed extra cooling", "A period when progress and funding dried up because AI couldn't deliver on its promises", "A chess tournament in 1997", "The season ChatGPT launched"], 1, "Computers were too slow and had too little memory, so investors and governments pulled back."),
+      q("What did Alan Turing suggest in 1950?", ["A machine counts as intelligent once it can beat a human at chess", "A machine needs real feelings before we can call it intelligent", "If you can't tell a machine from a human in a text chat, it's intelligent", "A machine is intelligent if it can learn any task without being told"], 2, "That's the Turing Test: judge by the conversation, not by what's inside the machine."),
+      q("What was an 'AI winter'?", ["A period when AI chips needed extra cooling to run at all, so they paused", "A period when funding and progress dried up because AI overpromised", "A period after a famous chess match that stalled research", "A period when ChatGPT was taken offline for a season"], 1, "Computers were too slow and had too little memory, so investors and governments pulled back."),
       q("Which event kicked off today's generative AI boom?", ["Turing's paper in 1950", "Deep Blue beating Kasparov in 1997", "ChatGPT's public launch in 2022"], 2, "ChatGPT showed the public an AI that could write essays, code and more."),
     ],
   },
@@ -32,9 +32,9 @@ export const lessons: Lesson[] = [
       card("After training", "When you ask a question, the model can't flip back through its training text. It uses the patterns it learned to generate a response one token at a time.\n\nMany chatbots also get extra training from people, who rate answers so the AI becomes more helpful and polite.", "after-training"),
     ],
     questions: [
-      q("What is a model mainly learning during training?", ["Exact pages to copy", "A list of correct answers", "Statistical patterns about language", "Your personal details"], 2, "It learns which words and ideas tend to go together."),
-      q("On its own, where does a model's answer come from?", ["A human types it", "It's looked up in the training data", "It's generated from patterns the model learned"], 2, "It's generated, not retrieved. (Some chatbots can also use search tools, which is a separate add-on.)"),
-      q("Why do chatbots get extra training from human feedback?", ["To make their answers more helpful and well-behaved", "To make them slower", "To delete their training data", "To give them feelings"], 0, "People rate answers, and the model learns which kinds of replies are most useful."),
+      q("What is a model mainly learning during training?", ["Exact pages that it will copy out later", "A list of correct answers to common questions", "Statistical patterns about language", "Your personal details from your account"], 2, "It learns which words and ideas tend to go together."),
+      q("On its own, where does a model's answer come from?", ["A human types the answer and sends it back", "It is looked up word for word in the training text", "It is generated from the patterns the model learned"], 2, "It's generated, not retrieved. (Some chatbots can also use search tools, which is a separate add-on.)"),
+      q("Why do chatbots get extra training from human feedback?", ["To make their answers more helpful and well-behaved", "To make them slower, so they can think for longer", "To delete any training data that is out of date", "To give them feelings about the topics they discuss"], 0, "People rate answers, and the model learns which kinds of replies are most useful."),
     ],
   },
   {
@@ -44,7 +44,7 @@ export const lessons: Lesson[] = [
       card("Plausible is not the same as true", "A hallucination isn't a database lookup that went wrong. The model generated text that fits the patterns it learned.\n\nAnd since AI always sounds confident, a made-up fact looks exactly like a real one. Always check anything important.", "hallucination"),
     ],
     questions: [
-      q("Which is an example of a hallucination?", ["A chatbot refuses to answer", "A chatbot answers slowly", "A chatbot invents a book that doesn't exist, with a convincing title and author", "A chatbot repeats your question"], 2, "It sounds real, but it was generated, not found."),
+      q("Which is an example of a hallucination?", ["A chatbot refuses to answer a question it can't check", "A chatbot gives you a correct answer that is a few years out of date", "A chatbot invents a book and author that don't exist, and cites it", "A chatbot repeats the question you asked, word for word"], 2, "It sounds real, but it was generated, not found."),
       q("Why can AI repeat outdated information?", ["It doesn't read dates", "It forgets everything after each message", "Its knowledge stops at a point in time"], 2, "A model only knows what was in its training data, unless it's given a way to look things up."),
       q("True or false: if an AI sounds confident, it's probably correct.", ["True", "False"], 1, "Confidence is a writing style, not proof. Check anything that matters."),
     ],
