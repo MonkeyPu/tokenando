@@ -187,6 +187,9 @@ a.btn { display: inline-block; text-align: center; }
   /* Teaching diagrams stay fully readable, just unanimated. */
   .lv-in, .lv-pop, .lv-stamp-in, .lv-rail::after, .lv-snow i,
   .lv-src, .lv-bar i, .lv-ball, .lv-blank { animation: none !important; }
+  /* Anything a scene animates lands on its finished state, so new scenes need no
+     per-class entry here. */
+  .lv *, .lv *::before, .lv *::after { animation: none !important; }
 }
 
 /* A visual the learner has already seen renders in its finished state, no replay. */
@@ -506,4 +509,135 @@ a.btn { display: inline-block; text-align: center; }
   .lv-events { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 0.5rem; }
   .lv-rail { display: none; }
 }
+
+/* ---------- Course: "Tokens" ---------- */
+/* Same rule as above: the base declaration is the finished state and the keyframes
+   describe only the "from", so reduced motion and lv-instant both land correctly. */
+.lv-tk {
+  display: inline-flex; align-items: center; padding: 0.28rem 0.55rem;
+  border: 2px solid var(--line); border-radius: 8px; background: var(--bg);
+  font: 700 0.82rem var(--font-display), system-ui, sans-serif; white-space: nowrap;
+}
+.lv-tk.tiny { padding: 0.16rem 0.36rem; font-size: 0.72rem; font-weight: 600; }
+.lv-tk.hot {
+  border-color: var(--green); color: var(--green);
+  background: color-mix(in srgb, var(--green) 12%, var(--bg));
+}
+.lv-tile {
+  width: 1.45rem; height: 1.75rem; display: grid; place-items: center;
+  border: 2px solid var(--line); border-radius: 6px; background: var(--bg);
+  font: 700 0.8rem var(--font-display), system-ui, sans-serif;
+}
+.lv-tile.hit {
+  border-color: #ff4d4f; color: #ff4d4f;
+  background: color-mix(in srgb, #ff4d4f 12%, var(--bg));
+}
+.lv-rule { display: flex; align-items: center; gap: 0.45rem; margin: 0.7rem 0 0; font-size: 0.78rem; color: var(--muted); }
+.lv-rule b { color: var(--fg); font-variant-numeric: tabular-nums; }
+
+/* 1. Chunks, not letters */
+.lv-ts { display: flex; flex-direction: column; gap: 0.5rem; }
+.lv-ts-body { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+.lv-ts-col { flex: 1 1 190px; display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.lv-ts-col .lv-mini { margin-top: 0.25rem; }
+.lv-ts-row { display: flex; flex-wrap: wrap; gap: 0.18rem; align-items: center; }
+.lv-ts-side { flex: 0 0 auto; }
+
+/* 2. Reusable pieces */
+.lv-ru { display: flex; flex-direction: column; gap: 0.55rem; }
+.lv-ru-body { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+.lv-ru-col { flex: 1 1 180px; display: flex; flex-direction: column; gap: 0.35rem; }
+.lv-ru-row { display: flex; align-items: center; gap: 0.3rem; }
+.lv-ru-n { font-size: 0.7rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
+.lv-ru-side { flex: 0 0 auto; }
+.lv-vocab { display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
+.lv-vocab b { font: 800 1.2rem var(--font-display), system-ui, sans-serif; color: var(--green); }
+.lv-vocab .lv-cap { flex: 1 1 140px; }
+
+/* 3. The strawberry question */
+.lv-sb { display: flex; flex-direction: column; gap: 0.55rem; }
+.lv-sb-answer b { color: #ff4d4f; }
+.lv-sb-foot { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+.lv-sb-foot .lv-stamp { flex: 0 0 auto; padding: 0.5rem 0.8rem; }
+.lv-sb-foot .lv-stamp b { font-size: 1.5rem; }
+.lv-sb-foot .lv-cap { flex: 1 1 150px; }
+.lv-sb-side { flex: 0 0 auto; }
+
+/* 4. Letters hidden from the model */
+.lv-lb { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: stretch; }
+.lv-lb-col {
+  flex: 1 1 150px; display: flex; flex-direction: column; gap: 0.35rem;
+  padding: 0.6rem 0.7rem; border: 2px solid var(--line); border-radius: 10px; background: var(--bg);
+}
+.lv-lb-col > b { font: 800 0.68rem var(--font-display), system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+.lv-lb-side { flex: 0 0 auto; display: flex; align-items: flex-end; }
+
+/* 5. Map of meaning */
+.lv-vmw { display: flex; flex-direction: column; gap: 0.6rem; }
+.lv-vm {
+  position: relative; height: 178px; border: 1px solid var(--line); border-radius: 10px;
+  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--fg) 7%, transparent), transparent 70%), var(--bg);
+}
+.lv-vm-label { position: absolute; font: 800 0.62rem var(--font-display), system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.lv-vm-label.near-a { left: 14%; top: 7%; }
+.lv-vm-label.near-b { left: 70%; top: 57%; }
+.lv-vm-dot { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 0.1rem; font: 700 0.68rem var(--font-display), system-ui, sans-serif; }
+/* Fade only — no transform, so an absolutely-positioned element keeps its
+   translate(-50%,-50%) centring while it animates in. */
+.lv-fade { animation: lv-fade 0.45s ease-out both; }
+@keyframes lv-fade { from { opacity: 0; } }
+.lv-vm-dot i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--green); }
+.lv-vm-dot.b i { background: #8b5cf6; }
+.lv-vmw-foot { display: flex; gap: 0.6rem; align-items: center; }
+.lv-vmw-foot .lv-cap { flex: 1 1 150px; }
+
+/* 6. Directions carry meaning */
+.lv-vx { display: flex; flex-direction: column; gap: 0.55rem; }
+.lv-vx-map { width: 100%; max-width: 260px; align-self: center; }
+.lv-vx-arrow { stroke: var(--green); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; animation: lv-draw 0.8s ease-out both; }
+.lv-vx-arrow-b { stroke: var(--muted); }
+@keyframes lv-draw { from { stroke-dashoffset: 1; } }
+.lv-vx-dot { fill: var(--muted); }
+.lv-vx-dot.hot { fill: var(--green); }
+.lv-vx-lbl { font: 700 9px var(--font-display), system-ui, sans-serif; fill: var(--muted); }
+.lv-vx-lbl.hot { fill: var(--green); }
+.lv-vx-foot { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.lv-vx-eq { display: flex; flex-wrap: wrap; gap: 0.25rem; align-items: center; flex: 1 1 190px; }
+.lv-vx-op { font-weight: 800; color: var(--muted); }
+.lv-vx-side { flex: 0 0 auto; }
+
+/* 7. Back to predicting */
+.lv-vp { display: flex; flex-direction: column; gap: 0.6rem; }
+.lv-vp-flow { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: stretch; }
+.lv-vp-stage { flex: 1 1 96px; display: flex; flex-direction: column; gap: 0.12rem; padding: 0.45rem 0.55rem; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); }
+.lv-vp-stage b { font: 800 0.66rem var(--font-display), system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.lv-vp-stage span { font-size: 0.74rem; font-weight: 600; line-height: 1.25; }
+.lv-vp-stage.out { border-color: var(--green); background: color-mix(in srgb, var(--green) 12%, var(--bg)); }
+.lv-vp-stage.out b, .lv-vp-stage.out span { color: var(--green); }
+.lv-vp-foot { display: flex; gap: 0.6rem; align-items: center; }
+.lv-vp-foot .lv-cap { flex: 1 1 160px; }
+
+/* 8. A limited memory */
+.lv-cw { display: flex; flex-direction: column; gap: 0.5rem; }
+.lv-cw-head { display: flex; align-items: baseline; justify-content: space-between; }
+.lv-cw-count { font-size: 0.7rem; font-weight: 800; color: #ff4d4f; }
+.lv-cw-bar { display: flex; gap: 2px; padding: 3px; height: 26px; border: 2px solid var(--line); border-radius: 8px; overflow: hidden; }
+.lv-cw-seg { flex: 1 1 0; border-radius: 3px; background: color-mix(in srgb, var(--green) 55%, var(--bg)); animation: lv-pop 0.4s ease-out both; }
+.lv-cw-seg.old {
+  background: color-mix(in srgb, var(--fg) 16%, var(--bg));
+  animation: lv-pop 0.4s ease-out 0.1s both, lv-dim 0.7s ease-out 2s both;
+}
+@keyframes lv-dim { from { background: color-mix(in srgb, var(--green) 55%, var(--bg)); } }
+.lv-cw-tags { display: flex; }
+.lv-cw-tag { font-size: 0.7rem; font-weight: 700; color: var(--muted); border-left: 3px solid #ff4d4f; padding-left: 0.4rem; }
+.lv-cw-foot { display: flex; gap: 0.6rem; align-items: center; }
+.lv-cw-foot .lv-cap { flex: 1 1 160px; }
+
+/* 9. Not every language costs the same */
+.lv-lc { display: flex; flex-direction: column; gap: 0.55rem; }
+.lv-lc-row { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
+.lv-lc-row > b { flex: 0 0 4.2rem; font: 800 0.72rem var(--font-display), system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.lv-lc-chips { display: flex; flex-wrap: wrap; gap: 0.18rem; flex: 1 1 150px; }
+.lv-lc-foot { display: flex; gap: 0.6rem; align-items: center; }
+.lv-lc-notes { flex: 1 1 170px; display: flex; flex-direction: column; gap: 0.3rem; }
 

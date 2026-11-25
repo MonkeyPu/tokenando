@@ -8,6 +8,15 @@ import TrainingPile from "./TrainingPile";
 import AfterTraining from "./AfterTraining";
 import FailureModes from "./FailureModes";
 import Hallucination from "./Hallucination";
+import TokenSplit from "./TokenSplit";
+import TokenReuse from "./TokenReuse";
+import StrawberryAsk from "./StrawberryAsk";
+import LetterBlind from "./LetterBlind";
+import VectorMap from "./VectorMap";
+import VectorMath from "./VectorMath";
+import VectorPredict from "./VectorPredict";
+import ContextWindow from "./ContextWindow";
+import LanguageCost from "./LanguageCost";
 
 // Register a scene here and reference its key from a card's `visual` field.
 // Scenes that show the mascot receive the learner's own `look`, so changing the
@@ -21,6 +30,15 @@ export const VISUALS: Record<string, ComponentType<{ look: Look }>> = {
   "after-training": AfterTraining,
   "failure-modes": FailureModes,
   hallucination: Hallucination,
+  "token-split": TokenSplit,
+  "token-reuse": TokenReuse,
+  "strawberry-ask": StrawberryAsk,
+  "letter-blind": LetterBlind,
+  "vector-map": VectorMap,
+  "vector-math": VectorMath,
+  "vector-predict": VectorPredict,
+  "context-window": ContextWindow,
+  "language-cost": LanguageCost,
 };
 
 export default function LessonVisual({

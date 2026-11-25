@@ -4,8 +4,8 @@ export const lessons: Lesson[] = [
   {
     title: "What is a token?",
     cards: [
-      card("Chunks, not letters", "AI doesn't read whole sentences or single letters. It splits text into tokens: pieces like 'straw' and 'berry', a short common word, or a bit of punctuation.\n\nA handy rule of thumb: about 750 words is roughly 1,000 tokens."),
-      card("Reusable pieces", "Tokens aren't random cuts. 'Run' and 'running' share the token 'run', so the model sees they're related, even in a sentence it has never met.\n\nBecause pieces get reused, a model needs only around 200,000 tokens, not millions of separate words. That saves a lot of memory."),
+      card("Chunks, not letters", "AI doesn't read whole sentences or single letters. It splits text into tokens: pieces like 'straw' and 'berry', a short common word, or a bit of punctuation.\n\nA handy rule of thumb: about 750 words is roughly 1,000 tokens.", "token-split"),
+      card("Reusable pieces", "Tokens aren't random cuts. 'Run' and 'running' share the token 'run', so the model sees they're related, even in a sentence it has never met.\n\nBecause pieces get reused, a model needs only around 200,000 tokens, not millions of separate words. That saves a lot of memory.", "token-reuse"),
     ],
     questions: [
       q("About how many tokens is 750 words?", ["About 100", "About 750,000", "About 1,000", "About 7,500"], 2, "Roughly 750 words is about 1,000 tokens."),
@@ -16,8 +16,8 @@ export const lessons: Lesson[] = [
   {
     title: "The strawberry problem",
     cards: [
-      card("A famous trick question", "Ask an AI, 'How many r's are in strawberry?' Plenty of models have confidently said 2. The right answer is 3.\n\nWhy? The model never sees s-t-r-a-w-b-e-r-r-y letter by letter."),
-      card("Tokens hide letters", "It sees chunks like 'straw' and 'berry'. To count letters it has to guess from patterns in its training data, while you can simply look.\n\nA human counts in a second. The model can sound totally sure and still be wrong, which is a great reminder to check the facts."),
+      card("A famous trick question", "Ask an AI, 'How many r's are in strawberry?' Plenty of models have confidently said 2. The right answer is 3.\n\nWhy? The model never sees s-t-r-a-w-b-e-r-r-y letter by letter.", "strawberry-ask"),
+      card("Tokens hide letters", "It sees chunks like 'straw' and 'berry'. To count letters it has to guess from patterns in its training data, while you can simply look.\n\nA human counts in a second. The model can sound totally sure and still be wrong, which is a great reminder to check the facts.", "letter-blind"),
     ],
     questions: [
       q("Why do some AIs miscount letters?", ["They cannot do any maths at all, not even counting", "They see tokens, not individual letters", "They are too lazy to check the answer carefully", "They only know the vowels in a word"], 1, "The text is chopped into chunks before the model sees it."),
@@ -28,9 +28,9 @@ export const lessons: Lesson[] = [
   {
     title: "Words as numbers",
     cards: [
-      card("From tokens to vectors", "Each token is turned into a long list of numbers called a vector (or embedding). Think of it as coordinates on a giant map of meaning.\n\nWords used in similar ways land close together. King, queen, monarch, crown and castle form one cluster. Apple and fruit sit in another."),
-      card("Directions carry meaning", "Relationships become directions on the map. Take 'king', subtract 'man', add 'woman', and you land near 'queen'.\n\nThe pictures we draw have 3 dimensions so we can see them. Real models use hundreds or even thousands."),
-      card("Back to predicting", "When you ask a question, the model turns your words into vectors, looks at the nearby ideas, and predicts the most likely next token. Then the next. Until the answer is complete."),
+      card("From tokens to vectors", "Each token is turned into a long list of numbers called a vector (or embedding). Think of it as coordinates on a giant map of meaning.\n\nWords used in similar ways land close together. King, queen, monarch, crown and castle form one cluster. Apple and fruit sit in another.", "vector-map"),
+      card("Directions carry meaning", "Relationships become directions on the map. Take 'king', subtract 'man', add 'woman', and you land near 'queen'.\n\nThe pictures we draw have 3 dimensions so we can see them. Real models use hundreds or even thousands.", "vector-math"),
+      card("Back to predicting", "When you ask a question, the model turns your words into vectors, looks at the nearby ideas, and predicts the most likely next token. Then the next. Until the answer is complete.", "vector-predict"),
     ],
     questions: [
       q("What is a vector in AI?", ["A short word that the model uses a lot", "A kind of virus that spreads between trained models", "A list of numbers that places a token on a map of meaning", "A speed limit on how fast a chatbot can write out a reply"], 2, "The numbers are coordinates for the token's meaning."),
@@ -41,8 +41,8 @@ export const lessons: Lesson[] = [
   {
     title: "Context windows and languages",
     cards: [
-      card("A limited memory", "The context window is the most tokens a model can handle at once: your whole chat so far, plus its replies. If a chat goes past the limit, older messages get summarised or dropped, so the AI can lose early details.\n\nLong chats also slow down, because the model compares every token with all the others, and that work grows faster than the chat does."),
-      card("Not every language costs the same", "Tokenizers learn mostly from English, so English is cheap to process. Many other languages need more tokens to say the same thing.\n\nMore tokens means higher cost and less room in the context window. It's one way AI isn't equally efficient for everyone."),
+      card("A limited memory", "The context window is the most tokens a model can handle at once: your whole chat so far, plus its replies. If a chat goes past the limit, older messages get summarised or dropped, so the AI can lose early details.\n\nLong chats also slow down, because the model compares every token with all the others, and that work grows faster than the chat does.", "context-window"),
+      card("Not every language costs the same", "Tokenizers learn mostly from English, so English is cheap to process. Many other languages need more tokens to say the same thing.\n\nMore tokens means higher cost and less room in the context window. It's one way AI isn't equally efficient for everyone.", "language-cost"),
     ],
     questions: [
       q("What can happen when a chat passes the context window limit?", ["Nothing at all, the AI remembers everything forever", "The chat gets faster, because there is less to read", "The AI deletes your account and starts over again", "Older messages can be summarised or dropped"], 3, "The model can lose early details."),
